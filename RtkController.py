@@ -386,20 +386,7 @@ class RtkController:
         self.semaphore.release()
 
         return 1
-### example usage
 
-#import timeit
-#print(timeit.timeit("rc.getStatus()", "import RtkController; rc = RtkController.RtkController('/Users/fedorovegor/Documents/RTKLIB/app/rtkrcv/gcc'); rc.start()", number = 100))
 
-#rtk_location = "/Users/fedorovegor/Documents/RTKLIB/app/rtkrcv/gcc"
-#rc = RtkController(rtk_location)
 
-# if rc.start() > 0:
-#     rc.restart()
 
-#     while(1):
-#         rc.getStatus()
-#         print("###STATUS###")
-#         print(rc.status)
-#         rc.getObs()
-#         time.sleep(1)
