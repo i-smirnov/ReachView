@@ -898,7 +898,7 @@ class RTKLIB:
 
             # update satellite levels
             self.rtkc.getObs()
-            self.rtkc.getIOStatus()
+            self.rtkc.getStreamStatus()
 
             if count % 10 == 0:
                 print("Sending sat rover levels:\n" + str(self.rtkc.obs_rover))
