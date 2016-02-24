@@ -414,7 +414,7 @@ $(document).on("pageinit", "#config_page", function() {
 
             var validSymbols = /^[a-zA-Z0-9_\-]+$/;
 
-            if (!validSymbols.test(config_name)) {
+            if ((!validSymbols.test(config_name)) || (config_name.length > 20)) {
                 $('.space_alert').css('display', 'inline-block');
             }
             else{
@@ -732,6 +732,8 @@ $(document).on("change", "input[name='radio_base_rover']", function() {
             $('#save_as_button').css('display', 'inline-block');
             $('#save_button').text('Save');
             $('#hide_buttons_button').css('display', 'inline-block');
+            $('#control_buttons').removeClass('baseButtons').addClass('roverButtons');
+            $('#save_button').css('margin-right', '10px');
             mode = "rover";
             console.log("Launching rover mode");
             socket.emit("shutdown base")
@@ -744,6 +746,8 @@ $(document).on("change", "input[name='radio_base_rover']", function() {
             $('#save_as_button').css('display', 'none');
             $('#save_button').text('Save & Load');
             $('#hide_buttons_button').css('display', 'none');
+            $('#control_buttons').removeClass('roverButtons').addClass('baseButtons');
+            $('#save_button').css('margin-right', '0px');
             mode = "base";
             console.log("Launching base mode");
             socket.emit("shutdown rover");

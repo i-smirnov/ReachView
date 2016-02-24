@@ -134,6 +134,43 @@ li.nav_log_container{
     margin: 0;
     text-align: right;
 }
+.table_container{
+	width: calc(50% - 34px);
+	float:right;
+	clear: none;
+	margin-bottom: 1em;
+}
+.table_container th, .table_container td{
+	font-size: 0.955em;
+}
+.status_left_field{
+	width:calc(45% - 34px);
+	float:left;
+	clear: none;
+	margin-bottom: 1em;
+	overflow: visible;
+}
+#config_select-button{
+	width: 225px;
+}
+.ui-controlgroup-horizontal .ui-controlgroup-controls .ui-radio{
+    width: calc(281px/2);
+}
+.ui-controlgroup-horizontal .ui-controlgroup-controls .ui-radio label{
+	text-align: center;
+}
+#hide_buttons_button{
+	margin-right: 0;
+}
+.roverButtons #start_button, .roverButtons #stop_button, .roverButtons #save_button{
+	width: calc((281px - 20px - 44.375px - 64px - 6px)/2);
+}
+.baseButtons #start_button, .baseButtons #stop_button, .baseButtons #save_button{
+	width: calc((281px - 15px - 64px - 4px)/2);
+}
+.table_container .ui-table-columntoggle-btn.ui-btn.ui-btn-a.ui-corner-all.ui-shadow.ui-mini{
+	display: none !important;
+}
 @media only screen and (max-width:760px){
     .ui-listview > li h2{
         font-size: 0.75em;
@@ -141,4 +178,34 @@ li.nav_log_container{
     .ui-listview > li p{
         font-size: 0.5em;
     }
+	.table_container{
+		width: calc(100% - 34px);
+		float: none;
+	}
+	.status_left_field{
+		width: calc(100% - 34px);
+		float: none;
+	}
+}
+@media only screen and (max-width:366px){
+	/*#config_select-button, #start_button, #stop_button, #save_button, .ui-controlgroup-horizontal .ui-controlgroup-controls .ui-radio{
+		width: inherit;
+	}*/
+	.roverButtons #start_button, .roverButtons #stop_button, .roverButtons #save_button{
+		width: calc((100% - 16px - 20px - 44.375px - 64px - 6px)/2);
+	}
+	.baseButtons #start_button, .baseButtons #stop_button, .baseButtons #save_button{
+		width: calc((100% - 15px - 64px - 4px)/2);
+	}
+	#config_select-button{
+		width: calc(100% - 64px);
+/*		width: calc(90% - 36px);*/
+	}
+	.ui-controlgroup-horizontal .ui-controlgroup-controls .ui-radio{
+	    width: inherit;
+	}
+}
+@media (min-width: 28em){
+.ui-field-contain > label ~ [class*=ui-], .ui-field-contain .ui-controlgroup-controls {
+    width: 100%;
 }
