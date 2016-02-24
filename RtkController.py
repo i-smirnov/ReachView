@@ -38,6 +38,7 @@ class RtkController:
         self.child = 0
 
         self.status = {}
+        self.io_status = {}
         self.obs_rover = {}
         self.obs_base = {}
         self.info = {}
@@ -386,6 +387,34 @@ class RtkController:
         self.semaphore.release()
 
         return 1
+
+    def getIOStatus(self):
+
+        self.semaphore.acquire()
+
+        self.io_status = {}
+
+        self.child.send("stream\r\n")
+
+        if self.expectAnswer("get stream") < 0:
+            self.semaphore.release()
+            return -1
+
+        io_status = self.child.before.split("\r\n")
+        self.io_status = self.parseIOStatus(io_status)
+
+        self.semaphore.release()
+
+        return 1
+
+    def parseIOStatus(self, io_status):
+        # io_status is a list of lines output by rtkrcv "stream" command
+        # first line of the table shows column names
+        print("######## Printing IO status #########")
+
+        for line in io_status:
+            print("New IO status line:")
+            print(line.split())
 
 
 
