@@ -181,6 +181,10 @@ class RTKLIB:
             self.status_thread = Thread(target = self.broadcastStatus)
             self.status_thread.start()
 
+        if self.stream_status_thread is None:
+            self.stream_status_thread = Thread(target = self.broadcastStreamStatus)
+            self.stream_status_thread.start()
+
         self.saveState()
 
         if self.enable_led:
@@ -213,6 +217,10 @@ class RTKLIB:
         if self.status_thread is not None:
             self.status_thread.join()
             self.status_thread = None
+
+        if self.stream_status_thread is not None:
+            self.stream_status_thread.join()
+            self.stream_status_thread = None
 
         self.saveState()
 
@@ -446,6 +454,9 @@ class RTKLIB:
 
         if self.status_thread is not None:
             self.status_thread.join()
+
+        if self.stream_status_thread is not None:
+            self.stream_status_thread.join()
 
         if self.satellite_thread is not None:
             self.satellite_thread.join()
@@ -901,7 +912,6 @@ class RTKLIB:
 
             # update satellite levels
             self.rtkc.getObs()
-            self.rtkc.getStreamStatus()
 
             if count % 10 == 0:
                 print("Sending sat rover levels:\n" + str(self.rtkc.obs_rover))
@@ -925,10 +935,28 @@ class RTKLIB:
                 print("Sending RTKLIB status select information:")
                 print(self.rtkc.info)
 
-            self.socketio.emit("coordinate broadcast", self.rtkc.info, namespace = "/test")
+            self.socketio.emit("status broadcast", self.rtkc.info, namespace = "/test")
 
             if self.enable_led:
                 self.updateLED()
+
+            count += 1
+            time.sleep(1)
+
+    # this function reads current rtklib status, coordinates and obs count
+    def broadcastStreamStatus(self):
+        count = 0
+
+        while self.server_not_interrupted:
+
+            # update RTKLIB status
+            self.rtkc.getStreamStatus()
+
+            if count % 10 == 0:
+                print("Sending RTKLIB stream status information:")
+                print(self.rtkc.info)
+
+            self.socketio.emit("stream status broadcast", self.rtkc.stream_status, namespace = "/test")
 
             count += 1
             time.sleep(1)

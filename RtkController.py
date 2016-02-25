@@ -38,7 +38,7 @@ class RtkController:
         self.child = 0
 
         self.status = {}
-        self.io_status = {}
+        self.stream_status = {}
         self.obs_rover = {}
         self.obs_base = {}
         self.info = {}
@@ -405,7 +405,7 @@ class RtkController:
         print("Before parsing:")
         print(stream_status_output)
 
-        self.stream_status = RtkrcvStreamStatus(stream_status_output)
+        self.stream_status = RtkrcvStreamStatus(stream_status_output).stream_status
 
         print(self.stream_status.stream_status)
 
