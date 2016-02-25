@@ -407,8 +407,6 @@ class RtkController:
 
         self.stream_status = RtkrcvStreamStatus(stream_status_output).stream_status
 
-        print(self.stream_status.stream_status)
-
         self.semaphore.release()
 
         return 1

@@ -954,7 +954,7 @@ class RTKLIB:
 
             if count % 10 == 0:
                 print("Sending RTKLIB stream status information:")
-                print(self.rtkc.info)
+                print(self.rtkc.stream_status)
 
             self.socketio.emit("stream status broadcast", self.rtkc.stream_status, namespace = "/test")
 
