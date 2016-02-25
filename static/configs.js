@@ -11,7 +11,7 @@ function updateIoStatus(msg){
 			to_append += '<td>' + msg[k]['Type'] + '</td>';
 			
 
-			if(typeof msg[k]['Message'] != "undefined"){
+			if(typeof msg[k]['Message'] != "undefined")
 				to_append += '<td>' + msg[k]['Message'] + '</td>';
 			else{
 				if(msg[k]['Status'] == 'C')
