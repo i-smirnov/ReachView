@@ -12,15 +12,7 @@ function updateIoStatus(msg){
 			
 
 			if(typeof msg[k]['Message'] != "undefined"){
-				if(msg[k]['Message'] == 'connecting...')
-					to_append += '<td>&#8635;</td>';
-				else if(msg[k]['Message'] == 'no mountp. reconnect...')
-					to_append += '<td>&#9888;</td>';
-				else if(msg[k]['Message'] == 'timeout')
-					to_append += '<td>&#x1f554;</td>';
-				else
-					to_append += '<td>' + msg[k]['Message'] + '</td>';
-			}
+				to_append += '<td>' + msg[k]['Message'] + '</td>';
 			else{
 				if(msg[k]['Status'] == 'C')
 					to_append += '<td>&#10003;</td>';
