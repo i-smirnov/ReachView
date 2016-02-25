@@ -1,5 +1,44 @@
 /// This function adds new inputs for particular selects
 
+function updateIoStatus(msg){
+	var to_append = '';
+	
+	for (var k in msg){
+		if(msg[k]['Type'] != '-'){
+			to_append += '<tr>';
+			to_append += '<td>' + k +'</td>';
+			to_append += '<td>' + msg[k]['Format'] + '</td>';
+			to_append += '<td>' + msg[k]['Type'] + '</td>';
+			
+
+			if(typeof msg[k]['Message'] != "undefined"){
+				if(msg[k]['Message'] == 'connecting...')
+					to_append += '<td>&#8635;</td>';
+				else if(msg[k]['Message'] == 'no mountp. reconnect...')
+					to_append += '<td>&#9888;</td>';
+				else if(msg[k]['Message'] == 'timeout')
+					to_append += '<td>&#x1f554;</td>';
+				else
+					to_append += '<td>' + msg[k]['Message'] + '</td>';
+			}
+			else{
+				if(msg[k]['Status'] == 'C')
+					to_append += '<td>&#10003;</td>';
+				else if(msg[k]['Status'] == '-')
+					to_append += '<td>&#10006;</td>';
+			}
+
+			to_append += '</tr>';
+		}
+	}
+
+	// console.log(to_append);
+
+	$('#table-column-toggle tbody').html(to_append).trigger("create");
+
+	// setInterval(function(){$('.config_status_connected, .config_status_disconnected')}, 500);
+}
+
 function checkInputSelects(i, method){ //inp OR out OR log
 	$('#' + method + 'str' + i + '-path_entry').attr('type', 'hidden');
 	$('#' + method + 'str' + i + '-path_entry').parent().css({'visibility':'hidden', 'border':'none'});

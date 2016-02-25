@@ -171,6 +171,16 @@ li.nav_log_container{
 .table_container .ui-table-columntoggle-btn.ui-btn.ui-btn-a.ui-corner-all.ui-shadow.ui-mini{
 	display: none !important;
 }
+/*.table_container .config_status_connected{
+	color:#44D62C;
+	display:inline-block;
+	width:22px;
+}
+.table_container .config_status_disconnected{
+	background:#FF766C;
+	display:inline-block;
+	width:22px;
+}*/
 @media only screen and (max-width:760px){
     .ui-listview > li h2{
         font-size: 0.75em;

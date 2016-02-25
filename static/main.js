@@ -206,17 +206,34 @@ $(document).ready(function () {
 
     // ####################### HANDLE COORDINATE MESSAGES #######################
 
-    socket.on("coordinate broadcast", function(msg) {
+    socket.on("status broadcast", function(msg) {
         // check if the browser tab and app tab
         if ((active_tab == "Status") && (isActive == true)) {
 
-            console.groupCollapsed('Coordinate msg received:');
+            console.groupCollapsed('Status msg received:');
                 for (var k in msg)
                     console.log(k + ':' + msg[k]);
             console.groupEnd();
 
             updateCoordinateGrid(msg);
         }
+    });
+
+    socket.on("stream status broadcast", function(msg) {
+        // check if the browser tab and app tab
+        // if ((active_tab == "Status") && (isActive == true)) {
+
+            console.groupCollapsed('Stream status msg received:');
+                for (var k in msg){
+                    console.groupCollapsed(k);
+                        for(var m in msg[k])
+                            console.log(m + ':' + msg[k][m]);
+                    console.groupEnd();
+                }
+            console.groupEnd();
+
+            updateIoStatus(msg);
+        // }
     });
 
     socket.on("current config rover", function(msg) {
