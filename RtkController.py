@@ -22,75 +22,54 @@
 # along with ReachView.  If not, see <http://www.gnu.org/licenses/>.
 
 import pexpect
-from threading import Semaphore, Thread
+from threading import Lock, Thread
 import time
 
 # This module automates working with RTKRCV directly
 # You can get sat levels, current status, start and restart the software
 
-class RtkController:
+class Rtkrcv:
 
     def __init__(self, rtklib_path):
 
         self.bin_path = rtklib_path + "/app/rtkrcv/gcc"
         self.config_path = rtklib_path + "/app/rtkrcv"
-
         self.child = 0
+
+        self.launched = False
+        self.current_config = ""
 
         self.status = {}
         self.obs_rover = {}
         self.obs_base = {}
         self.info = {}
-        self.semaphore = Semaphore()
 
-        self.started = False
-        self.launched = False
-        self.current_config = ""
+        # prevent the rtkrcv prompt from being used simultaneously
+        self.mutex = Lock()
 
-    def expectAnswer(self, last_command = ""):
-        a = self.child.expect(["rtkrcv>", pexpect.EOF, "error"])
-        # check rtklib output for any errors
-        if a == 1:
-            print("got EOF while waiting for rtkrcv> . Shutting down")
-            print("This means something went wrong and rtkrcv just stopped")
-            print("output before exception: " + str(self.child))
-            return -1
-
-        if a == 2:
-            print("Could not " + last_command + ". Please check path to binary or config name")
-            print("You may also check serial port for availability")
-            return -2
-
-        return 1
-
-    def launch(self, config_name = None):
+    def launch(self, config_name):
         # run an rtkrcv instance with the specified config:
         # if there is a slash in the name we consider it a full location
         # otherwise, it's supposed to be in the upper directory(rtkrcv inside app)
 
-        if config_name is None:
-            config_name = "reach_single_default.conf"
-
         if not self.launched:
 
-            self.semaphore.acquire()
+            self.mutex.acquire()
 
-            if "/" in config_name:
-                spawn_command = self.bin_path + "/rtkrcv -o " + config_name
-            else:
-                spawn_command = self.bin_path + "/rtkrcv -o " + self.config_path + "/" + config_name
-
+            spawn_command = self.bin_path + "/rtkrcv -s -o " + self.config_path + "/" + config_name
             self.child = pexpect.spawn(spawn_command, cwd = self.bin_path, echo = False)
 
-            print('Launching rtklib with: "' + spawn_command + '"')
+            print('Launching rtkrcv with: "' + spawn_command + '"')
+            launch_failed = self.child.expect(["rtkrcv>", pexpect.EOF])
 
-            if self.expectAnswer("spawn") < 0:
-                self.semaphore.release()
-                return -1
+            if launch_failed:
+                self.mutex.release()
+                raise ValueError(config_name)
 
-            self.semaphore.release()
             self.launched = True
             self.current_config = config_name
+
+            self.mutex.release()
 
             # launch success
             return 1
@@ -101,7 +80,7 @@ class RtkController:
     def shutdown(self):
 
         if self.launched:
-            self.semaphore.acquire()
+            self.mutex.acquire()
 
             self.child.send("shutdown\r\n")
 
@@ -123,7 +102,7 @@ class RtkController:
             if self.child.isalive():
                 r = -1
 
-            self.semaphore.release()
+            self.mutex.release()
 
             self.launched = False
 
@@ -132,97 +111,18 @@ class RtkController:
         # already shut down
         return 2
 
-
-    def start(self):
-
-        if not self.started:
-            self.semaphore.acquire()
-
-            self.child.send("start\r\n")
-
-            if self.expectAnswer("start") < 0:
-                self.semaphore.release()
-                return -1
-
-            self.semaphore.release()
-            self.started = True
-
-            return 1
-
-        # already started
-        return 2
-
-    def stop(self):
-
-        if self.started:
-            self.semaphore.acquire()
-
-            self.child.send("stop\r\n")
-
-            if self.expectAnswer("stop") < 0:
-                self.semaphore.release()
-                return -1
-
-            self.semaphore.release()
-
-            self.started = False
-
-            return 1
-
-        # already stopped
-        return 2
-
-    def restart(self):
-
-        if self.started:
-            self.semaphore.acquire()
-
-            self.child.send("restart\r\n")
-
-            if self.expectAnswer("restart") < 0:
-                self.semaphore.release()
-                return -1
-
-            self.semaphore.release()
-
-            return 3
-        else:
-            # if we are not started yet, just start
-            return self.start()
-
-    def loadConfig(self, config_name = "rtk.conf"):
-
-        self.semaphore.acquire()
-
-        if "/" not in config_name:
-            # we assume this is not the full path
-            # so it must be in the upper dir
-            self.child.send("load " + "../" + config_name + "\r\n")
-        else:
-            self.child.send("load " + config_name + "\r\n")
-
-        if self.expectAnswer("load config") < 0:
-            self.semaphore.release()
-            return -1
-
-        self.semaphore.release()
-
-        self.current_config = config_name
-
-        return 1
-
     def getStatus(self):
 
-        self.semaphore.acquire()
+        self.mutex.acquire()
 
         self.child.send("status\r\n")
+        cmd_failed = self.child.expect(["rtkrcv>", pexpect.EOF])
 
-        if self.expectAnswer("get status") < 0:
-            self.semaphore.release()
+        if cmd_failed:
+            self.mutex.release()
             return -1
 
         # time to extract information from the status form
-
         status = self.child.before.split("\r\n")
 
         if status != {}:
@@ -318,25 +218,25 @@ class RtkController:
                             self.info["lon"] = lon
                             self.info["height"] = height
 
-        self.semaphore.release()
+        self.mutex.release()
 
         return 1
 
     def getObs(self):
 
-        self.semaphore.acquire()
+        self.mutex.acquire()
 
         self.obs_rover = {}
         self.obs_base = {}
 
         self.child.send("obs\r\n")
+        cmd_failed = self.child.expect(["rtkrcv>", pexpect.EOF])
 
-        if self.expectAnswer("get obs") < 0:
-            self.semaphore.release()
+        if cmd_failed:
+            self.mutex.release()
             return -1
 
         # time to extract information from the obs form
-
         obs = self.child.before.split("\r\n")
 
         # strip out empty lines
@@ -383,6 +283,28 @@ class RtkController:
                     self.obs_base = {}
                     self.obs_rover = {}
 
-        self.semaphore.release()
+        self.mutex.release()
 
         return 1
+
+
+if __name__ == "__main__":
+    print("Running rtkrcv tests!")
+
+    rtkc = Rtkrcv("/home/reach/RTKLIB")
+
+    try:
+        rtkc.launch("reach_single_default.conf")
+    except ValueError, config_name:
+        print("Could not start rtkrcv due to an error in " + str(config_name))
+
+    print("Received status " + str(rtkc.getStatus()))
+    print(rtkc.status)
+    print("Received obs " + str(rtkc.getObs()))
+
+    rtkc.shutdown()
+
+    print(rtkc.obs_base)
+    print(rtkc.obs_rover)
+
+
