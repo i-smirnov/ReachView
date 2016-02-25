@@ -45,8 +45,10 @@ class Rtkrcv:
 
         self.status = {}
         self.stream_status = {}
+
         self.obs_rover = {}
         self.obs_base = {}
+
         self.info = {}
 
         # prevent the rtkrcv prompt from being used simultaneously
@@ -116,7 +118,7 @@ class Rtkrcv:
         # already shut down
         return 2
 
-    def getStatus(self):
+    def get_status(self):
 
         self.mutex.acquire()
 
@@ -227,7 +229,7 @@ class Rtkrcv:
 
         return 1
 
-    def getObs(self):
+    def get_observations(self):
 
         self.mutex.acquire()
 
@@ -292,7 +294,7 @@ class Rtkrcv:
 
         return 1
 
-    def getStreamStatus(self):
+    def get_stream_status(self):
 
         self.mutex.acquire()
 
@@ -324,7 +326,7 @@ class RtkrcvStreamStatus:
 
     def __init__(self, stream_status):
 
-        self.stream_status = self.parseStreamStatus(stream_status)
+        self.stream_status = self.parse_stream_status(stream_status)
 
     def __str__(self):
 
@@ -341,11 +343,11 @@ class RtkrcvStreamStatus:
 
         return to_print
 
-    def parseStreamStatus(self, stream_status):
+    def parse_stream_status(self, stream_status):
         # stream_status is a list of lines returned by rtkrcv
 
         # find the start of the table
-        header_index = self.getHeaderIndex(stream_status)
+        header_index = self.find_header_index(stream_status)
 
         print("$$$$$$$$$$$$$$$$$PARSING STREAM STATUS")
         print(header_index)
@@ -358,9 +360,9 @@ class RtkrcvStreamStatus:
         stream_status = stream_status[header_index + 1:]
 
         # parse the rest of the strings, showing status for different streams
-        return self.parseStreams(stream_status)
+        return self.parse_streams(stream_status)
 
-    def getHeaderIndex(self, stream_status):
+    def find_header_index(self, stream_status):
         # Table header starts with the word "Stream"
 
         for ind, line in enumerate(stream_status):
@@ -369,7 +371,7 @@ class RtkrcvStreamStatus:
 
         return None
 
-    def parseStreams(self, streams):
+    def parse_streams(self, streams):
         # example line containing a stream:
         # input rover serial ubx c num num num num [message]
 
@@ -386,12 +388,12 @@ class RtkrcvStreamStatus:
 
                 print(stream_properties)
 
-                stream_entry = self.parseStreamEntry(stream_properties)
+                stream_entry = self.parse_stream_entry(stream_properties)
                 stream_info.update(stream_entry)
 
         return stream_info
 
-    def parseStreamEntry(self, stream_properties):
+    def parse_stream_entry(self, stream_properties):
         # convert a list of properties to a dict of properties
 
         # create a dict of all stream's properties
@@ -411,10 +413,11 @@ if __name__ == "__main__":
     except RtkrcvConfigError, config_name:
         print("Could not start rtkrcv due to an error in " + str(config_name))
 
-    print("Received status " + str(rtkc.getStatus()))
-    print("Received obs " + str(rtkc.getObs()))
-    print("Received stream status " + str(rtkc.getStreamStatus()))
+    print("Received status " + str(rtkc.get_status()))
+    print("Received obs " + str(rtkc.get_observations()))
+    print("Received stream status " + str(rtkc.get_stream_status()))
 
+    a = raw_input("Press enter to shutdown!")
     rtkc.shutdown()
 
     print(rtkc.status)
