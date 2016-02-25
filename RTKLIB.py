@@ -81,8 +81,11 @@ class RTKLIB:
 
         # broadcast satellite levels and status with these
         self.server_not_interrupted = True
+
         self.satellite_thread = None
-        self.coordinate_thread = None
+        self.status_thread = None
+        self.stream_status_thread = None
+
         self.conversion_thread = None
 
         # we try to restore previous state
@@ -174,9 +177,9 @@ class RTKLIB:
             self.satellite_thread = Thread(target = self.broadcastSatellites)
             self.satellite_thread.start()
 
-        if self.coordinate_thread is None:
-            self.coordinate_thread = Thread(target = self.broadcastCoordinates)
-            self.coordinate_thread.start()
+        if self.status_thread is None:
+            self.status_thread = Thread(target = self.broadcastStatus)
+            self.status_thread.start()
 
         self.saveState()
 
@@ -207,9 +210,9 @@ class RTKLIB:
             self.satellite_thread.join()
             self.satellite_thread = None
 
-        if self.coordinate_thread is not None:
-            self.coordinate_thread.join()
-            self.coordinate_thread = None
+        if self.status_thread is not None:
+            self.status_thread.join()
+            self.status_thread = None
 
         self.saveState()
 
@@ -441,8 +444,8 @@ class RTKLIB:
         self.server_not_interrupted = False
         self.led.blinker_not_interrupted = False
 
-        if self.coordinate_thread is not None:
-            self.coordinate_thread.join()
+        if self.status_thread is not None:
+            self.status_thread.join()
 
         if self.satellite_thread is not None:
             self.satellite_thread.join()
@@ -910,7 +913,7 @@ class RTKLIB:
             time.sleep(1)
 
     # this function reads current rtklib status, coordinates and obs count
-    def broadcastCoordinates(self):
+    def broadcastStatus(self):
         count = 0
 
         while self.server_not_interrupted:
