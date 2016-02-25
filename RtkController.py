@@ -44,6 +44,7 @@ class Rtkrcv:
         self.current_config = ""
 
         self.status = {}
+        self.stream_status = {}
         self.obs_rover = {}
         self.obs_base = {}
         self.info = {}
@@ -291,10 +292,118 @@ class Rtkrcv:
 
         return 1
 
+    def getStreamStatus(self):
+
+        self.mutex.acquire()
+
+        self.stream_status = {}
+
+        self.child.send("stream\r\n")
+
+        cmd_failed = self.child.expect(["rtkrcv>", pexpect.EOF])
+
+        if cmd_failed:
+            self.mutex.release()
+            return -1
+
+        stream_status_output = self.child.before.split("\r\n")
+
+        print("Before parsing:")
+        print(stream_status_output)
+
+        self.stream_status = RtkrcvStreamStatus(stream_status_output).stream_status
+
+        self.mutex.release()
+
+        return 1
+
+
+class RtkrcvStreamStatus:
+
+    table_header = ["Stream", "Type", "Format", "Status", "In-bytes", "In-bps", "Out-bytes", "Out-bps", "Message"]
+
+    def __init__(self, stream_status):
+
+        self.stream_status = self.parseStreamStatus(stream_status)
+
+    def __str__(self):
+
+        to_print = "Printing rtkrcv stream status:\n"
+
+        for name, properties in self.stream_status.iteritems():
+            to_print += "Stream: " + name + "\n"
+
+            for stream_property in self.table_header[1:]:
+                if stream_property in properties:
+                    to_print += stream_property + ": " + properties[stream_property] + ", "
+
+            to_print += "\n"
+
+        return to_print
+
+    def parseStreamStatus(self, stream_status):
+        # stream_status is a list of lines returned by rtkrcv
+
+        # find the start of the table
+        header_index = self.getHeaderIndex(stream_status)
+
+        print("$$$$$$$$$$$$$$$$$PARSING STREAM STATUS")
+        print(header_index)
+        print(stream_status)
+
+        if header_index is None:
+            return None
+
+        header = stream_status[header_index]
+        stream_status = stream_status[header_index + 1:]
+
+        # parse the rest of the strings, showing status for different streams
+        return self.parseStreams(stream_status)
+
+    def getHeaderIndex(self, stream_status):
+        # Table header starts with the word "Stream"
+
+        for ind, line in enumerate(stream_status):
+            if "Stream" in line:
+                return ind
+
+        return None
+
+    def parseStreams(self, streams):
+        # example line containing a stream:
+        # input rover serial ubx c num num num num [message]
+
+        stream_info = {}
+
+        for line in streams:
+            stream_properties = line.split()
+
+            # check empty lines
+            if stream_properties:
+                # concatenate stream name!
+                if stream_properties[0] != "monitor":
+                    stream_properties = [" ".join(stream_properties[0:2])] + stream_properties[2:]
+
+                print(stream_properties)
+
+                stream_entry = self.parseStreamEntry(stream_properties)
+                stream_info.update(stream_entry)
+
+        return stream_info
+
+    def parseStreamEntry(self, stream_properties):
+        # convert a list of properties to a dict of properties
+
+        # create a dict of all stream's properties
+        stream_entry = dict(zip(self.table_header, stream_properties))
+
+        # transform it into a {"stream_name": "properties"}
+        return {stream_entry.pop("Stream"): stream_entry}
+
 
 if __name__ == "__main__":
-    print("Running rtkrcv tests!")
 
+    print("Running rtkrcv tests!")
     rtkc = Rtkrcv("/home/reach/RTKLIB")
 
     try:
@@ -303,12 +412,20 @@ if __name__ == "__main__":
         print("Could not start rtkrcv due to an error in " + str(config_name))
 
     print("Received status " + str(rtkc.getStatus()))
-    print(rtkc.status)
     print("Received obs " + str(rtkc.getObs()))
+    print("Received stream status " + str(rtkc.getStreamStatus()))
 
     rtkc.shutdown()
 
+    print(rtkc.status)
     print(rtkc.obs_base)
     print(rtkc.obs_rover)
+    print(rtkc.stream_status)
+
+
+
+
+
+
 
 

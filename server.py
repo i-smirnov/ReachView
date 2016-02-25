@@ -233,8 +233,11 @@ if __name__ == "__main__":
         rtk.led.blinker_not_interrupted = False
         rtk.waiting_for_single = False
 
-        if rtk.coordinate_thread is not None:
-            rtk.coordinate_thread.join()
+        if rtk.status_thread is not None:
+            rtk.status_thread.join()
+
+        if rtk.stream_status_thread is not None:
+            rtk.stream_status_thread.join()
 
         if rtk.satellite_thread is not None:
             rtk.satellite_thread.join()
