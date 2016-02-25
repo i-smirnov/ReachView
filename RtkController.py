@@ -25,12 +25,12 @@ import pexpect
 from threading import Lock, Thread
 import time
 
-# This module automates working with RTKRCV directly
-# You can get sat levels, current status, start and restart the software
-
 # throw this exception when we an error in rtkrcv config file
 class RtkrcvConfigError(Exception):
     pass
+
+# This module automates working with RTKRCV directly
+# You can get sat levels, current status, start and restart the software
 
 class Rtkrcv:
 
@@ -324,9 +324,9 @@ class RtkrcvStreamStatus:
 
     table_header = ["Stream", "Type", "Format", "Status", "In-bytes", "In-bps", "Out-bytes", "Out-bps", "Message"]
 
-    def __init__(self, stream_status):
-
-        self.stream_status = self.parse_stream_status(stream_status)
+    def __init__(self, rtkrcv_output):
+        # parse output of rtkrcv command "stream"
+        self.stream_status = self.parse_stream_status(rtkrcv_output)
 
     def __str__(self):
 
@@ -343,24 +343,21 @@ class RtkrcvStreamStatus:
 
         return to_print
 
-    def parse_stream_status(self, stream_status):
+    def parse_stream_status(self, rtkrcv_output):
         # stream_status is a list of lines returned by rtkrcv
 
         # find the start of the table
-        header_index = self.find_header_index(stream_status)
-
-        print("$$$$$$$$$$$$$$$$$PARSING STREAM STATUS")
-        print(header_index)
-        print(stream_status)
+        header_index = self.find_header_index(rtkrcv_output)
 
         if header_index is None:
+            # if no header is found, input data is invalid
             return None
 
         header = stream_status[header_index]
-        stream_status = stream_status[header_index + 1:]
+        stream_table = stream_status[header_index + 1:]
 
-        # parse the rest of the strings, showing status for different streams
-        return self.parse_streams(stream_status)
+        # parse the rest of the strings, getting statuses for different streams
+        return self.parse_stream_table(stream_table)
 
     def find_header_index(self, stream_status):
         # Table header starts with the word "Stream"
@@ -371,7 +368,7 @@ class RtkrcvStreamStatus:
 
         return None
 
-    def parse_streams(self, streams):
+    def parse_stream_table(self, streams):
         # example line containing a stream:
         # input rover serial ubx c num num num num [message]
 
