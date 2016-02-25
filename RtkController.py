@@ -28,6 +28,10 @@ import time
 # This module automates working with RTKRCV directly
 # You can get sat levels, current status, start and restart the software
 
+# throw this exception when we an error in rtkrcv config file
+class RtkrcvConfigError(Exception):
+    pass
+
 class Rtkrcv:
 
     def __init__(self, rtklib_path):
@@ -64,7 +68,7 @@ class Rtkrcv:
 
             if launch_failed:
                 self.mutex.release()
-                raise ValueError(config_name)
+                raise RtkrcvConfigError(config_name)
 
             self.launched = True
             self.current_config = config_name
@@ -295,7 +299,7 @@ if __name__ == "__main__":
 
     try:
         rtkc.launch("reach_single_default.conf")
-    except ValueError, config_name:
+    except RtkrcvConfigError, config_name:
         print("Could not start rtkrcv due to an error in " + str(config_name))
 
     print("Received status " + str(rtkc.getStatus()))
