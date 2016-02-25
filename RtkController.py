@@ -38,6 +38,7 @@ class RtkController:
         self.child = 0
 
         self.status = {}
+        self.stream_status = {}
         self.obs_rover = {}
         self.obs_base = {}
         self.info = {}
@@ -386,20 +387,119 @@ class RtkController:
         self.semaphore.release()
 
         return 1
-### example usage
 
-#import timeit
-#print(timeit.timeit("rc.getStatus()", "import RtkController; rc = RtkController.RtkController('/Users/fedorovegor/Documents/RTKLIB/app/rtkrcv/gcc'); rc.start()", number = 100))
+    def getStreamStatus(self):
 
-#rtk_location = "/Users/fedorovegor/Documents/RTKLIB/app/rtkrcv/gcc"
-#rc = RtkController(rtk_location)
+        self.semaphore.acquire()
 
-# if rc.start() > 0:
-#     rc.restart()
+        self.stream_status = {}
 
-#     while(1):
-#         rc.getStatus()
-#         print("###STATUS###")
-#         print(rc.status)
-#         rc.getObs()
-#         time.sleep(1)
+        self.child.send("stream\r\n")
+
+        if self.expectAnswer("get stream") < 0:
+            self.semaphore.release()
+            return -1
+
+        stream_status_output = self.child.before.split("\r\n")
+
+        print("Before parsing:")
+        print(stream_status_output)
+
+        self.stream_status = RtkrcvStreamStatus(stream_status_output).stream_status
+
+        self.semaphore.release()
+
+        return 1
+
+class RtkrcvStreamStatus:
+
+    table_header = ["Stream", "Type", "Format", "Status", "In-bytes", "In-bps", "Out-bytes", "Out-bps", "Message"]
+
+    def __init__(self, stream_status):
+
+        self.stream_status = self.parseStreamStatus(stream_status)
+
+    def __str__(self):
+
+        to_print = "Printing rtkrcv stream status:\n"
+
+        for name, properties in self.stream_status.iteritems():
+            to_print += "Stream: " + name + "\n"
+
+            for stream_property in self.table_header[1:]:
+                if stream_property in properties:
+                    to_print += stream_property + ": " + properties[stream_property] + ", "
+
+            to_print += "\n"
+
+        return to_print
+
+    def parseStreamStatus(self, stream_status):
+        # stream_status is a list of lines returned by rtkrcv
+
+        # find the start of the table
+        header_index = self.getHeaderIndex(stream_status)
+
+        print("$$$$$$$$$$$$$$$$$PARSING STREAM STATUS")
+        print(header_index)
+        print(stream_status)
+
+        if header_index is None:
+            return None
+
+        header = stream_status[header_index]
+        stream_status = stream_status[header_index + 1:]
+
+        # parse the rest of the strings, showing status for different streams
+        return self.parseStreams(stream_status)
+
+    def getHeaderIndex(self, stream_status):
+        # Table header starts with the word "Stream"
+
+        for ind, line in enumerate(stream_status):
+            if "Stream" in line:
+                return ind
+
+        return None
+
+    def parseStreams(self, streams):
+        # example line containing a stream:
+        # input rover serial ubx c num num num num [message]
+
+        stream_info = {}
+
+        for line in streams:
+            stream_properties = line.split()
+
+            # check empty lines
+            if stream_properties:
+                # concatenate stream name!
+                if stream_properties[0] != "monitor":
+                    stream_properties = [" ".join(stream_properties[0:2])] + stream_properties[2:]
+
+                print(stream_properties)
+
+                stream_entry = self.parseStreamEntry(stream_properties)
+                stream_info.update(stream_entry)
+
+        return stream_info
+
+    def parseStreamEntry(self, stream_properties):
+        # convert a list of properties to a dict of properties
+
+        # create a dict of all stream's properties
+        stream_entry = dict(zip(self.table_header, stream_properties))
+
+        # transform it into a {"stream_name": "properties"}
+        return {stream_entry.pop("Stream"): stream_entry}
+
+
+
+
+
+
+
+
+
+
+
