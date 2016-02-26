@@ -60,6 +60,11 @@ $(document).ready(function () {
         console.log("Active tab = " + active_tab);
     });
 
+     $('.footer_close').click(function(){
+        $( ".warning_footer" ).slideToggle( "slow");
+        return false;
+    });
+
     chart = new Chart();
     chart.create();
 
@@ -240,5 +245,11 @@ $(document).ready(function () {
     	showBase(msg);
     });
 
+    socket.on("user message", function(msg) {
+        $( ".warning_footer h1 span" ).text(msg);
+        $( ".warning_footer" ).slideToggle( "slow");
+
+        setTimeout(function(){$( ".warning_footer" ).slideToggle( "slow");}, 5000);
+    });
     // end of document.ready
 });
