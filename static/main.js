@@ -129,7 +129,6 @@ $(document).ready(function () {
             mode = "base";
         }
 
-        chart.cleanStatus(mode, status);
         socket.emit("read config rover", to_send);
 
         if(jQuery.inArray( msg.rover.current_config, defaultConfigs ) >= 0)

@@ -408,11 +408,11 @@ class RTKLIB:
 
             return res
         else:
-            print("We were not started before, so we need to perform a full start")
+            print("We were not started before, so do not need to start at this time")
 
             self.semaphore.release()
 
-            return self.startRover()
+            return 1
 
     def readConfigRover(self, config):
 
