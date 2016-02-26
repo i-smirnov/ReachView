@@ -246,7 +246,8 @@ $(document).ready(function () {
     });
 
     socket.on("user message", function(msg) {
-        $( ".warning_footer h1 span" ).text(msg);
+        console.log('User message received');
+        $( ".warning_footer h1 span" ).text(msg.msg);
         $( ".warning_footer" ).slideToggle( "slow");
 
         setTimeout(function(){$( ".warning_footer" ).slideToggle( "slow");}, 5000);

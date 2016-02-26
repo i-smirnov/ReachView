@@ -397,6 +397,7 @@ class RTKLIB:
             if res == 3:
                 print("Restart successful")
                 print(config_file + " config loaded")
+                self.socketio.emit("user message", {"msg": "Restart with config " + config_file + " successful"}, namespace="/test")
             elif res == 1:
                 print("rtkrcv started instead of restart")
             elif res < 1:
