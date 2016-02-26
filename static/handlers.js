@@ -296,6 +296,7 @@ $(document).on("pageinit", "#config_page", function() {
             $('#delete_config_button').addClass('ui-disabled');
 
         socket.emit("read config " + mode, to_send);
+        socket.emit("load config " + mode, to_send);
     });
 
     $('#hide_buttons_button').click(function() {

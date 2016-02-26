@@ -136,6 +136,10 @@ def readConfigRover(json):
 def writeConfigRover(json):
     rtk.writeConfigRover(json)
 
+@socketio.on("load config rover", namespace="/test")
+def loadConfigRover(json):
+    rtk.loadConfigRover(json.get("config_file_name", None))
+
 @socketio.on("write and load config rover", namespace="/test")
 def writeAndLoadConfig(json):
     rtk.writeConfigRover(json)
