@@ -173,7 +173,7 @@ function splitLogInformation(){
 
             $(this).find("h2").text(time[0] + ' | ' + log_state);
 
-            if(splitLogString[3] == "True") {
+            if(splitLogString[3] == "true") {
                 console.log("Found log being converted: " + log_name);
                 updateConversionStatusDialog(log_name, "This log is being converted. Please wait");
                 createCancelConversionButton(log_name);
@@ -387,9 +387,21 @@ $(document).on("pageinit", "#config_page", function() {
     $('#save_as_button').click(function(){
         var mode = $("input[name=radio_base_rover]:checked").val();
         var config_to_send = GetConfigToSend();
+        var empty = false;
 
         $(".hidden_list").slideUp('fast');
-        $( "#popupLogin" ).popup( "open");
+
+        $('.required_field').each(function(){
+            if($(this).val() == ''){
+                empty = true;
+                return false;
+            }
+        });
+
+        if(empty)
+            $( "#popupEmpty" ).popup( "open");
+        else
+            $( "#popupLogin" ).popup( "open");
 
         checkConfTitle();
 
@@ -431,12 +443,25 @@ $(document).on("pageinit", "#config_page", function() {
 
     $('#save_button').click(function(){
         var mode = $("input[name=radio_base_rover]:checked").val();
+        var empty = false;
 
-        if (mode == "base") {
-            $('#config-save-load-submit').click();
+        $('.required_field').each(function(){
+            if($(this).val() == ''){
+                empty = true;
+                return false;
+            }
+        });
+
+        if(empty){
+            $( "#popupEmpty" ).popup( "open");
         }
-        else
-            $( "#popupSave" ).popup( "open");
+        else{
+            if (mode == "base") {
+                $('#config-save-load-submit').click();
+            }
+            else
+                $( "#popupSave" ).popup( "open");
+        }
     });
 
     $('#config-save-submit').click(function(){
@@ -516,7 +541,7 @@ $(document).on("pageinit", "#config_page", function() {
 
 });
 
-$(document).on("click", ".logs_page", function() {
+$(document).on("pagebeforeshow", "#logs_page", function() {
     socket.emit("get logs list");
 });
 
@@ -630,7 +655,7 @@ $(document).on("pageinit", "#logs_page", function() {
     });
 });
 
-$(document).on("click", ".settings", function() {
+$(document).on("pagebeforeshow", "#settings", function() {
     console.log('Sending message for current RINEX version');
     socket.emit("read RINEX version");
   });
@@ -657,7 +682,7 @@ $(document).on("pageinit", "#settings", function() {
                 $('.load_update p').text(updateStatus);
             }, 1000);
 
-            setTimeout(function(){clearInterval(intervalID);$('.load_update').html('<span style="color:green;position:relative;top:20px;">Refresh the page</span>');}, 1000*60*2);
+            setTimeout(function(){clearInterval(intervalID);$('.load_update').html('<span>Refresh the page</span>');}, 1000*60*2);
             socket.emit("update reachview");
         }
         else
