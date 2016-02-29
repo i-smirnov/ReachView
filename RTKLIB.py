@@ -85,6 +85,7 @@ class RTKLIB:
         self.coordinate_thread = None
         self.conversion_thread = None
 
+        self.system_time_calibrated = False
         # we try to restore previous state
         # in case we can't, we start as rover in single mode
         self.loadState()
@@ -886,9 +887,9 @@ class RTKLIB:
                 # if we decided we need a new pattern, then start blinking it
                 self.led.startBlinker(blink_pattern, delay)
 
-    def timeUpdateRequired(self, old_status, new_status):
+    def timeUpdateRequired(self, solution_status):
         # update time if we moved from "-" status to single/float/whatever
-        if old_status == "-" and new_status != "-":
+        if self.system_time_calibrated == False and solution_status != "-":
             return True
         else:
             return False
@@ -899,6 +900,14 @@ class RTKLIB:
         print("##### UPDATING SYSTEM TIME #####")
         print(date)
         print(time)
+        # busybox date cmd can use a following format
+        # YYYY.MM.DD-hh:mm:ss
+        datetime_string = ".".join(date) + "-" + ":".join(time)
+        cmd = ["date", "-s", datetime_string]
+        out = check_output(cmd)
+
+        self.system_time_calibrated = True
+
         return
 
     # thread workers for broadcasing rtkrcv status
@@ -928,15 +937,12 @@ class RTKLIB:
 
         while self.server_not_interrupted:
 
-            # get current solution status
-            current_solution_status = self.rtkc.status.get("solution status", None)
-
             # update RTKLIB status
             self.rtkc.getStatus()
 
             new_solution_status = self.rtkc.status.get("solution status", None)
 
-            if self.timeUpdateRequired(current_solution_status, new_solution_status):
+            if self.timeUpdateRequired(new_solution_status):
                 date_list, time_list = self.rtkc.gps_datetime
                 self.updateSystemTime(date_list, time_list)
 
