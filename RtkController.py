@@ -247,8 +247,6 @@ class RtkController:
 
             for line in status:
                 spl = line.split(":", 1)
-                print("Checking status value!!!!")
-                print(spl)
 
                 if len(spl) > 1:
                     # get rid of extra whitespace
@@ -263,6 +261,7 @@ class RtkController:
                 # extract time
                 print("Extracting time")
                 print(self.status["time of receiver clock rover"])
+
                 if self.status["time of receiver clock rover"] != "-":
                     self.gps_datetime = self.extractTime(self.status["time of receiver clock rover"])
 

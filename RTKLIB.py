@@ -887,12 +887,29 @@ class RTKLIB:
                 # if we decided we need a new pattern, then start blinking it
                 self.led.startBlinker(blink_pattern, delay)
 
-    def timeUpdateRequired(self, solution_status):
-        # update time if we moved from "-" status to single/float/whatever
-        if self.system_time_calibrated == False and solution_status != "-":
+    def isTimeSynchronizedByNtp(self):
+
+        out = check_output("timedatectl")
+
+        if "NTP synchronized: yes" in out:
             return True
         else:
             return False
+
+    def gpsTimeUpdateRequired(self, solution_status):
+        # we require time updated by gps if ntp sync is not available and we haven't done it yet
+        if self.system_time_calibrated:
+            return False
+        else:
+            if self.isTimeSynchronizedByNtp():
+                self.system_time_calibrated = True
+                return False
+            else:
+                if solution_status != "-":
+                    self.system_time_calibrated = True
+                    return True
+                else:
+                    return False
 
     def updateSystemTime(self, date, time):
         # requires a date list and a time list
@@ -906,7 +923,6 @@ class RTKLIB:
         cmd = ["date", "-s", datetime_string]
         out = check_output(cmd)
 
-        self.system_time_calibrated = True
 
         return
 
@@ -928,6 +944,7 @@ class RTKLIB:
 
             self.socketio.emit("satellite broadcast rover", self.rtkc.obs_rover, namespace = "/test")
             self.socketio.emit("satellite broadcast base", self.rtkc.obs_base, namespace = "/test")
+
             count += 1
             time.sleep(1)
 
@@ -942,9 +959,10 @@ class RTKLIB:
 
             new_solution_status = self.rtkc.status.get("solution status", None)
 
-            if self.timeUpdateRequired(new_solution_status):
+            if self.gpsTimeUpdateRequired(new_solution_status):
                 date_list, time_list = self.rtkc.gps_datetime
                 self.updateSystemTime(date_list, time_list)
+                print("Restarting rtkrcv with correct time... " + str(self.rtkc.restart()))
 
             if count % 10 == 0:
                 print("Sending RTKLIB status select information:")
