@@ -41,6 +41,7 @@ class RtkController:
         self.obs_rover = {}
         self.obs_base = {}
         self.info = {}
+        self.gps_datetime = [], []
         self.semaphore = Semaphore()
 
         self.started = False
@@ -211,6 +212,21 @@ class RtkController:
 
         return 1
 
+    def extractTime(self, rtkrcv_time_string):
+        # example of rtkrcv time string: "YYYY/MM/DD hh:mm:ss.ssssssssss"
+        print(rtkrcv_time_string)
+
+        # strip second fractions
+        rtkrcv_time_string = rtkrcv_time_string.split(".")[0]
+
+        date, time = rtkrcv_time_string.split()
+        date = date.split("/")
+        time = time.split(":")
+
+        print(date, time)
+
+        return date, time
+
     def getStatus(self):
 
         self.semaphore.acquire()
@@ -225,12 +241,14 @@ class RtkController:
 
         status = self.child.before.split("\r\n")
 
-        if status != {}:
+        if status != []:
 
             # print("Got status!!!:")
 
             for line in status:
-                spl = line.split(":")
+                spl = line.split(":", 1)
+                print("Checking status value!!!!")
+                print(spl)
 
                 if len(spl) > 1:
                     # get rid of extra whitespace
@@ -240,14 +258,16 @@ class RtkController:
 
                     self.status[param] = value
 
-                    # print(param + ":::"  + value)
-
-                    # print("Gotten status:\n" + str(self.status))
-
             if self.status != {}:
+
+                # extract time
+                print("Extracting time")
+                print(self.status["time of receiver clock rover"])
+                if self.status["time of receiver clock rover"] != "-":
+                    self.gps_datetime = self.extractTime(self.status["time of receiver clock rover"])
+
                 # print("Current status:\n" + str(self.status))
                 self.info = {}
-
 
                 for key in self.status:
                     # we want to parse all the messages received by rover, base or corr

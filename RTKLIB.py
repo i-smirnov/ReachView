@@ -886,6 +886,21 @@ class RTKLIB:
                 # if we decided we need a new pattern, then start blinking it
                 self.led.startBlinker(blink_pattern, delay)
 
+    def timeUpdateRequired(self, old_status, new_status):
+        # update time if we moved from "-" status to single/float/whatever
+        if old_status == "-" and new_status != "-":
+            return True
+        else:
+            return False
+
+    def updateSystemTime(self, date, time):
+        # requires a date list and a time list
+        # ["YYYY", "MM", "DD"], ["hh", "mm", "ss"]
+        print("##### UPDATING SYSTEM TIME #####")
+        print(date)
+        print(time)
+        return
+
     # thread workers for broadcasing rtkrcv status
 
     # this function reads satellite levels from an exisiting rtkrcv instance
@@ -913,12 +928,21 @@ class RTKLIB:
 
         while self.server_not_interrupted:
 
+            # get current solution status
+            current_solution_status = self.rtkc.status.get("solution status", None)
+
             # update RTKLIB status
             self.rtkc.getStatus()
 
+            new_solution_status = self.rtkc.status.get("solution status", None)
+
+            if self.timeUpdateRequired(current_solution_status, new_solution_status):
+                date_list, time_list = self.rtkc.gps_datetime
+                self.updateSystemTime(date_list, time_list)
+
             if count % 10 == 0:
                 print("Sending RTKLIB status select information:")
-                print(self.rtkc.info)
+                print(self.rtkc.status)
 
             self.socketio.emit("coordinate broadcast", self.rtkc.info, namespace = "/test")
 
