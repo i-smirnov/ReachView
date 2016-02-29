@@ -73,6 +73,22 @@ $(document).ready(function () {
         setTimeout(function(){chart.resize();}, 500);
     });
 
+    $('.simple-menu').sidr({
+        timing: 'linear'
+    });
+
+    $('#sidr ul li').on( "click", function(){
+        $.sidr('close', 'sidr');
+    });
+
+    // $(document).on( "swipeleft", function(){
+    //     $.sidr('close', 'sidr');
+    // });
+
+    // $(document).on( "swiperight", function(){
+    //     $.sidr('open', 'sidr');
+    // });
+
     // ####################### HANDLE REACH MODES, START AND STOP MESSAGES #######################
 
     // handle data broadcast

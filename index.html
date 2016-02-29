@@ -31,8 +31,10 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
     <meta http-equiv="pragma" content="no-cache" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.mobile-1.4.5.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.sidr.light.min.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='jquery-1.11.2.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='jquery.mobile-1.4.5.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.sidr.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='d3.v3.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='configs.js') }}" charset="utf-8"></script>
@@ -44,21 +46,9 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
 
 <!-- Status page here:-->
 <div data-role="page" id="status_page">
-    <div data-role="header">
-        <div data-role="navbar" id="navbar1">
-            <ul>
-                <li>
-                    <a href="#" class="tab ui-btn-active ui-state-persist status_page">Status</a>
-                </li>
-                <li>
-                    <a href="#config_page" class="tab">Config</a>
-                </li>
-                <li class="nav_log_container">
-                    <a href="#logs_page" class="tab logs_page">Logs</a>
-                    <a href="#settings" data-icon="gear" class="settings" data-iconpos="notext"></a>
-                </li>
-            </ul>
-        </div>
+    <div class="burger_header">
+        <a href="#sidr" class="simple-menu" data-role="button" data-icon="bullets" data-iconpos="notext">Menu</a>
+        <h3>Status page</h3>
     </div>
 
     <div class="ui-grid-a">
@@ -96,23 +86,11 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
 
 <!-- Config page here:-->
 <div data-role="page" id="config_page">
-    <div class="loader"><img src="static/images/ajax-loader.gif" alt=""></div>
-    <div data-role="header">
-        <div data-role="navbar" id="navbar2">
-            <ul>
-                <li>
-                    <a href="#status_page" class="tab status_page">Status</a>
-                </li>
-                <li>
-                    <a href="#" class="tab ui-btn-active ui-state-persist">Config</a>
-                </li>
-                <li class="nav_log_container">
-                    <a href="#logs_page" class="tab logs_page">Logs</a>
-                    <a href="#settings" class="settings" data-icon="gear" data-iconpos="notext"></a>
-                </li>
-            </ul>
-        </div>
+    <div class="burger_header">
+        <a href="#sidr" class="simple-menu" data-role="button" data-icon="bullets" data-iconpos="notext">Menu</a>
+        <h3>Config page</h3>
     </div>
+    <div class="loader"><img src="static/images/ajax-loader.gif" alt=""></div>
 
     <div data-role="main" class="ui-content">
         <form id="config_form">
@@ -244,21 +222,9 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
 
 <!-- Logs page here:-->
 <div data-role="page" id="logs_page">
-    <div data-role="header">
-        <div data-role="navbar" id="navbar3">
-            <ul>
-                <li>
-                    <a href="#status_page" class="tab status_page">Status</a>
-                </li>
-                <li>
-                    <a href="#config_page" class="tab">Config</a>
-                </li>
-                <li class="nav_log_container">
-                    <a href="#logs_page" class="tab ui-btn-active ui-state-persist logs_page">Logs</a>
-                    <a href="#settings" class="settings" data-icon="gear" data-iconpos="notext"></a>
-                </li>
-            </ul>
-        </div>
+    <div class="burger_header">
+        <a href="#sidr" class="simple-menu" data-role="button" data-icon="bullets" data-iconpos="notext">Menu</a>
+        <h3>Logs page</h3>
     </div>
 
     <div data-role="main" class="ui-content">
@@ -272,23 +238,10 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
 
 <!-- Settings page here:-->
 <div data-role="page" id="settings">
-    <div data-role="header">
-        <div data-role="navbar" id="navbar3">
-            <ul>
-                <li>
-                    <a href="#status_page" class="tab status_page">Status</a>
-                </li>
-                <li>
-                    <a href="#config_page" class="tab">Config</a>
-                </li>
-                <li class="nav_log_container">
-                    <a href="#logs_page" class="tab logs_page">Logs</a>
-                    <a href="#settings" class="tab ui-btn-active ui-state-persist settings" data-icon="gear" data-iconpos="notext"></a>
-                </li>
-            </ul>
-        </div>
+    <div class="burger_header">
+        <a href="#sidr" class="simple-menu" data-role="button" data-icon="bullets" data-iconpos="notext">Menu</a>
+        <h3>Settings page</h3>
     </div>
-
     <div data-role="main" class="ui-content">
         <div id="ui-bar-test" class="ui-bar ui-bar-a ui-corner-all network_container">
             <p>Network: {{ system_status.network_status.ssid }}</p>
@@ -330,6 +283,13 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
         </div>
     </div>
 </div>
-
+<div id="sidr">
+  <ul>
+    <li><a href="#status_page">Status</a></li>
+    <li><a href="#config_page">Config</a></li>
+    <li><a href="#logs_page">Logs</a></li>
+    <li><a href="#settings">Settings</a></li>
+  </ul>
+</div>
 </body>
 </html>

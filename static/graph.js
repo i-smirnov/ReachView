@@ -24,8 +24,8 @@ function Chart() {
             fontSize: '15px'
         };
 
-        $("#status_block").css({borderRight: '1px solid #ddd'});
-        $("#mode_block").css({borderRight: '1px solid #ddd'});
+        $("#status_block").css({borderRight: '1px solid #ddd', borderTop: "1px solid #ddd"});
+        $("#mode_block").css({borderRight: '1px solid #ddd', borderTop: "1px solid #ddd"});
         $("#lat_block").css(grid_style);
         $("#lon_block").css(grid_style);
         $("#height_block").css(grid_style);

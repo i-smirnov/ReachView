@@ -14,7 +14,7 @@ li.nav_log_container{
 .loader{
 	text-align:center;
 	position:absolute;
-	top:33.5px;
+	top:34px;
 	width:100%;
 	height:100%;
 	z-index:1000;
@@ -133,6 +133,29 @@ li.nav_log_container{
     right: 3.333em;
     margin: 0;
     text-align: right;
+}
+.burger_header{
+	padding:2px 5px;height:100%;background:rgb(221, 221, 221);
+}
+.burger_header:after{
+	content: '';
+	display: block;
+	clear: both;
+}
+.burger_header a{
+	margin:0;
+	float:left;
+}
+.burger_header h3{
+	margin: 0;
+	padding: 7px 40px;
+	text-align: center;
+	font-size: 16px;
+}
+#sidr ul li a{
+	font-size: 1em;
+	font-weight: 700;
+	font-family: sans-serif;
 }
 @media only screen and (max-width:760px){
     .ui-listview > li h2{
