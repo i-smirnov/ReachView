@@ -133,6 +133,15 @@ $(document).ready(function () {
             $('#hide_buttons_button').css('display', 'none');
             mode = "base";
         }
+        var msg_status = {
+            "lat" : "0",
+            "lon" : "0",
+            "height": "0",
+            "solution_status": status,
+            "positioning_mode": mode
+        };
+
+        updateCoordinateGrid(msg_status);
 
         socket.emit("read config rover", to_send);
 
