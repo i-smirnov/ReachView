@@ -85,6 +85,8 @@ $(document).ready(function () {
     socket.on("current state", function(msg) {
         // check if the browser tab and app tab are active
 
+        console.log(msg);
+
         if(typeof msg.state == "undefined")
             msg.state = 'base';
 
@@ -117,6 +119,8 @@ $(document).ready(function () {
 
         select_options.val(msg.rover.current_config);
 
+        console.log(msg.state);
+
         if (msg.state == "rover") {
             $('input:radio[name="radio_base_rover"]').filter('[value="rover"]').attr( 'checked', true );
             $('#config_select-button').parent().parent().css('display', 'block');
@@ -133,6 +137,7 @@ $(document).ready(function () {
             $('#hide_buttons_button').css('display', 'none');
             mode = "base";
         }
+
         var msg_status = {
             "lat" : "0",
             "lon" : "0",
@@ -142,8 +147,8 @@ $(document).ready(function () {
         };
 
         updateCoordinateGrid(msg_status);
-
-        socket.emit("read config rover", to_send);
+        console.log('config from main');
+        socket.emit("read config " + mode, to_send);
 
         if(jQuery.inArray( msg.rover.current_config, defaultConfigs ) >= 0)
             $('#reset_config_button').removeClass('ui-disabled');

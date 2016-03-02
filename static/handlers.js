@@ -295,6 +295,7 @@ $(document).on("pageinit", "#config_page", function() {
         else
             $('#delete_config_button').addClass('ui-disabled');
 
+        console.log('from select change');
         socket.emit("read config " + mode, to_send);
         socket.emit("load config " + mode, to_send);
     });
@@ -758,5 +759,6 @@ $(document).on("change", "input[name='radio_base_rover']", function() {
     $('#start_button').css('display', 'inline-block');
 
     console.log("Request for " + mode + " config");
+    console.log('config from handlers');
     socket.emit("read config " + mode, to_send);
 });
