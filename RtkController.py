@@ -353,8 +353,8 @@ class RtkrcvStreamStatus:
             # if no header is found, input data is invalid
             return None
 
-        header = stream_status[header_index]
-        stream_table = stream_status[header_index + 1:]
+        header = rtkrcv_output[header_index]
+        stream_table = rtkrcv_output[header_index + 1:]
 
         # parse the rest of the strings, getting statuses for different streams
         return self.parse_stream_table(stream_table)
@@ -403,24 +403,24 @@ class RtkrcvStreamStatus:
 if __name__ == "__main__":
 
     print("Running rtkrcv tests!")
-    rtkc = Rtkrcv("/home/reach/RTKLIB")
+    rtkrcv = Rtkrcv("/home/reach/RTKLIB")
 
     try:
-        rtkc.launch("reach_single_default.conf")
+        rtkrcv.launch("reach_single_default.conf")
     except RtkrcvConfigError, config_name:
         print("Could not start rtkrcv due to an error in " + str(config_name))
 
-    print("Received status " + str(rtkc.get_status()))
-    print("Received obs " + str(rtkc.get_observations()))
-    print("Received stream status " + str(rtkc.get_stream_status()))
+    print("Received status " + str(rtkrcv.get_status()))
+    print("Received obs " + str(rtkrcv.get_observations()))
+    print("Received stream status " + str(rtkrcv.get_stream_status()))
 
-    a = raw_input("Press enter to shutdown!")
-    rtkc.shutdown()
+    raw_input("Press enter to shutdown!")
+    print(rtkrcv.shutdown())
 
-    print(rtkc.status)
-    print(rtkc.obs_base)
-    print(rtkc.obs_rover)
-    print(rtkc.stream_status)
+    print(rtkrcv.status)
+    print(rtkrcv.obs_base)
+    print(rtkrcv.obs_rover)
+    print(rtkrcv.stream_status)
 
 
 
