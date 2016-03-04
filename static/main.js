@@ -158,7 +158,7 @@ $(document).ready(function () {
     // ####################### HANDLE SATELLITE LEVEL BROADCAST #######################
 
     chart = new Chart();
-    chart.sparkline("#new-visitors", "line", 30, 55, "basis", 750, "#26A69A");
+    chart.sparkline("#new-visitors", "line", 30, 60, "basis", 750, "#26A69A");
 
     socket.on("satellite broadcast rover", function(msg) {
         // check if the browser tab and app tab are active
@@ -173,10 +173,7 @@ $(document).ready(function () {
             for (var i in msg)
                 average += parseFloat(msg[i]);
 
-            console.log('average: ' + average/10);
-
-            average = 0.1*average;
-            chart.update("#new-visitors", "line", 30, 55, "basis", 750, "#26A69A", average);
+            chart.update("#new-visitors", "line", 30, 60, "basis", 750, "#26A69A", 0.1*average);
             // chart.roverUpdate(msg);
         }
     });

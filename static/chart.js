@@ -5,6 +5,7 @@ function Chart() {
         this.x = '';
         this.line = '';
         var x;
+        var y;
         // this.path = '';
 
 	    this.sparkline = function(element, chartType, qty, height, interpolation, duration, color) {
@@ -22,7 +23,7 @@ function Chart() {
 
         // Generate random data (for demo only)
         for (var i=0; i < qty; i++) {
-            this.data.push(Math.floor(Math.random() * qty))
+            this.data.push(Math.floor(Math.random() * 0))
         }
 
         console.log(this.data);
@@ -34,7 +35,7 @@ function Chart() {
         x = d3.scale.linear().range([0, width]);
 
         // Vertical
-        var y = d3.scale.linear().range([height - 5, 5]);
+        y = d3.scale.linear().range([height - 5, 5]);
 
 
 
@@ -45,7 +46,7 @@ function Chart() {
         x.domain([1, qty - 3])
 
         // Vertical
-        y.domain([0, qty])
+        y.domain([0, height])
             
         console.log(x(0));
 
@@ -177,8 +178,6 @@ function Chart() {
             // Area
             svg.select(".d3-area").attr("d", area);
         }
-
-        // this.x = x;
     }
 
             // Update random data. For demo only
@@ -186,25 +185,15 @@ function Chart() {
 
     this.update = function(element, chartType, qty, height, interpolation, duration, color, msg) {
 
-        // x = this.x;
-    	            // push a new data point onto the back
-      // for (var i=0; i < qty; i++) {
-      //       this.data.push(Math.floor(Math.random() * qty))
-      //   }
-        // console.log(msg);
-        console.log(typeof msg);
-        console.log(msg.toFixed(3));
-        var a = parseInt(msg.toFixed(3));
-        this.data.push(a);
+        this.data.push(parseFloat(msg));
         // pop the old data point off the front
         this.data.shift();
-        console.log(this.data);
         // Redraw the path and slide it to the left
         this.path
             .attr("transform", null)
             .transition()
                 .duration(duration)
-                .ease("linear")
+                .ease("easeOutQuart")
                 .attr("transform", "translate(" + x(0) + ",0)");
 
         // Update path type
@@ -214,7 +203,5 @@ function Chart() {
         else {
             this.path.attr("d", this.line).attr("class", "d3-line d3-line-medium").style('stroke', color);
         }
-
-        /*this.x = x;*/
     }
 };
