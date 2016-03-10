@@ -160,6 +160,12 @@ $(document).ready(function () {
     chart = new Chart();
     chart.sparkline("#new-visitors", "line", 30, 60, "basis", 750, "#26A69A");
 
+    barChart = new barChart();
+    barChart.barGrouped('#d3-bar-grouped', 220);
+
+    var testData = [{'State':'G1', 'Rover':['0', 'red'], 'Base':['0', 'green']}];
+    console.log(testData);
+
     socket.on("satellite broadcast rover", function(msg) {
         // check if the browser tab and app tab are active
         if ((active_tab == "Status") && (isActive == true)) {
@@ -174,6 +180,10 @@ $(document).ready(function () {
                 average += parseFloat(msg[i]);
 
             chart.update("#new-visitors", "line", 30, 60, "basis", 750, "#26A69A", 0.1*average);
+
+            testData = [{'State':'G1', 'Rover':['10', 'red'], 'Base':['0', 'green']}];
+            console.log(testData);
+            
             // chart.roverUpdate(msg);
         }
     });
@@ -186,6 +196,8 @@ $(document).ready(function () {
                     console.log(k + ':' + msg[k]);
             console.groupEnd();
 
+            testData[0]['Base'][0] = 100;
+            console.log(testData);
             // chart.baseUpdate(msg);
         }
     });
