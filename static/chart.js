@@ -6,11 +6,11 @@ function Chart() {
         this.line = '';
         var x;
         var y;
+
         // this.path = '';
 
 	    this.sparkline = function(element, chartType, qty, height, interpolation, duration, color) {
-
-
+        
         // Basic setup
         // ------------------------------
 
@@ -65,8 +65,6 @@ function Chart() {
             .y1(function(d) { 
                 return y(d); 
             });
-
-
 
         // Create SVG
         // ------------------------------
@@ -203,11 +201,14 @@ function Chart() {
 };
 
 function barChart() {
-
-
+        
+    var svg;
+    var y;
+    var height = 220;
+    var data = [];
+    var currentLabels = [];
     // Chart setup
-    this.barGrouped = function(element, height) {
-
+    this.barGrouped = function(element) {
 
         // Basic setup
         // ------------------------------
@@ -215,8 +216,9 @@ function barChart() {
         // Define main variables
         var d3Container = d3.select(element),
             margin = {top: 5, right: 10, bottom: 20, left: 40},
-            width = d3Container.node().getBoundingClientRect().width - margin.left - margin.right,
-            height = height - margin.top - margin.bottom - 5;
+            width = d3Container.node().getBoundingClientRect().width - margin.left - margin.right;
+
+        height = height - margin.top - margin.bottom - 5;
 
         // Construct scales
         // ------------------------------
@@ -229,14 +231,8 @@ function barChart() {
             .range([0, width]);
 
         // Vertical
-        var y = d3.scale.linear()
+        y = d3.scale.linear()
             .range([height, 0]);
-
-        // Colors
-        var color = d3.scale.ordinal()
-        .range(["green", "#eeeeee"]);
-
-
 
         // Create axes
         // ------------------------------
@@ -261,7 +257,7 @@ function barChart() {
         var container = d3Container.append("svg");
 
         // Add SVG group
-        var svg = container
+        svg = container
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -270,15 +266,24 @@ function barChart() {
 
         // Load data
         // ------------------------------
-
-            var data = [{'State':'G1', 'Rover':['10', 'red'], 'Base':['50', 'green']}];
+            data = [
+                {'State':'G1', 'Rover':['0', 'red'], 'Base':['0', 'green']},
+                {'State':'G2', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']}, 
+                {'State':'G3', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
+                {'State':'G4', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
+                {'State':'G5', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
+                {'State':'G6', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
+                {'State':'G7', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
+                {'State':'G8', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
+                {'State':'G9', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
+                {'State':'G10', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']}
+            ];
             var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "State"; });
 
             // Pull out values
             data.forEach(function(d) {
-                d.ages = ageNames.map(function(name) { return {name: name, value: +d[name][0], color: d[name][1]}; });
+                d.ages = ageNames.map(function(name) { return {name: name, value: d[name][0], color: d[name][1]}; });
             });
-
 
             // Set input domains
             // ------------------------------
@@ -288,8 +293,7 @@ function barChart() {
             x1.domain(ageNames).rangeRoundBands([0, x0.rangeBand()]);
 
             // Vertical
-            y.domain([0, d3.max(data, function(d) { return d3.max(d.ages, function(d) { return d.value; }); })]);
-
+            y.domain([0, 55]);
 
             //
             // Append chart elements
@@ -398,31 +402,163 @@ function barChart() {
         }
     }
 
-    // this.barUpdate = function(){
-    //     var data = [{'State':'G1', 'Rover':['100', 'green'], 'Base':['10', 'red']}];
-    //     var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "State"; });
+    this.roverUpdate = function(msg){
+        // msg object contains satellite data for rover in {"name0": "level0", "name1": "level1"} format
 
-    //     // Pull out values
-    //     data.forEach(function(d) {
-    //         d.ages = ageNames.map(function(name) { return {name: name, value: +d[name][0], color: d[name][1]}; });
-    //     });
+        // we want to display the top 10 results
+        var number_of_satellites = 10;
 
-    //     // var state = svg.selectAll(".bar-group")
-    //     //     .data(data)
-    //     //     .enter()
-    //     //     .append("g")
-    //     //         .attr("class", "bar-group")
-    //     //         .attr("transform", function(d) { return "translate(" + x0(d.State) + ",0)"; });
+        // graph has a list of datasets. rover sat values are in the first one
+        var rover_dataset_number = 1;
 
-    //     // Append bars
-    //     svg.selectAll("rect")
-    //         .transition()
-    //         .delay(0)
-    //         .duration(1000)
-    //         .ease('cubic-in-out')
-    //             .attr("x", function(d) { return x1(d.name); })
-    //             .attr("y", function(d) { return y(d.value); })
-    //             .attr("height", function(d) { return height - y(d.value); })
-    //             .style("fill", function(d) {return d.color; });
-    // }
+        // first, we convert the msg object into a list of satellites to make it sortable
+
+        var new_sat_values = [];
+
+        for (var k in msg) {
+            new_sat_values.push({sat:k, level:msg[k]});
+        }
+
+        // sort the sat levels by ascension
+        new_sat_values.sort(function(a, b) {
+            var diff = a.level - b.level;
+
+            if (Math.abs(diff) < 3) {
+                diff = 0;
+            }
+
+            return diff
+        });
+
+        // next step is to cycle through top 10 values if they exist
+        // and extract info about them: level, name, and define their color depending on the level
+
+        var new_sat_values_length = new_sat_values.length;
+        var new_sat_levels = [];
+        var new_sat_labels = [];
+        var new_sat_fillcolors = [];
+
+        for(var i = new_sat_values_length - number_of_satellites; i < new_sat_values_length; i++) {
+            // check if we actually have enough satellites to plot:
+            if (i <  0) {
+                // we have less than number_of_satellites to plot
+                // so we fill the first bars of the graph with zeroes and stuff
+                new_sat_levels.push(0);
+                new_sat_labels.push("");
+                new_sat_fillcolors.push("rgba(0, 0, 0, 0.9)");
+            } else {
+                // we have gotten to useful data!! let's add it to the the array too
+
+                // for some reason I sometimes get undefined here. So plot zero just to be safe
+                var current_level = parseInt(new_sat_values[i].level) || 0;
+                var current_fillcolor;
+
+                // determine the fill color depending on the sat level
+                switch(true) {
+                    case (current_level < 30):
+                        current_fillcolor = "#FF766C"; // Red
+                        break;
+                    case (current_level >= 30 && current_level <= 45):
+                        current_fillcolor = "#FFEA5B"; // Yellow
+                        break;
+                    case (current_level >= 45):
+                        current_fillcolor = "#44D62C"; // Green
+                        break;
+                }
+
+                new_sat_levels.push(current_level);
+                new_sat_labels.push(new_sat_values[i].sat);
+                new_sat_fillcolors.push(current_fillcolor);
+            }
+        }
+
+        for (var i = 0; i < new_sat_levels.length; i++) {
+            
+            data[i]['State'] = new_sat_labels[i];
+            data[i]['Rover'][0] = new_sat_levels[i];
+            data[i]['Rover'][1] = new_sat_fillcolors[i];
+
+            currentLabels[i] = new_sat_labels[i];
+        };
+
+        var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "State"; });
+        // Pull out values
+        data.forEach(function(d) {
+            d.ages = ageNames.map(function(name) { return {name: name, value: d[name][0], color: d[name][1]}; });
+        });
+
+        svg.selectAll("text")
+            .data(data)
+            .text(function(d) {return d.State;});
+
+        var state = svg.selectAll(".bar-group")
+            .data(data)
+
+        state.selectAll(".d3-bar")
+            .data(function(d) {return d.ages; })
+            .transition()
+            .duration(500)
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); })
+            .style("fill", function(d) {return d.color; });
+    }
+
+    this.baseUpdate = function(msg){
+
+        var base_dataset_number = 0;
+        var current_level = 0;
+        var current_fillcolor;
+        var new_sat_levels = [];
+        // var new_sat_labels = [];
+        var new_sat_fillcolors = [];
+
+        // cycle through the graphs's labels and extract base levels for them
+        currentLabels.forEach(function(label, label_index) {
+            if (label in msg) {
+                // get the sat level as an integer
+                current_level = parseInt(msg[label]);
+
+                new_sat_levels.push(current_level);
+                new_sat_fillcolors.push("#d9d9d9");
+
+            } else {
+                // if we don't the same satellite in the base
+                new_sat_levels.push(0);
+                new_sat_fillcolors.push("#d9d9d9");
+            }
+
+        });
+        for (var i = 0; i < new_sat_levels.length; i++) {
+            data[i]['Base'][0] = new_sat_levels[i];
+            data[i]['Base'][1] = new_sat_fillcolors[i];
+        };
+
+        // if(JSON.stringify(msg) == JSON.stringify(lastBaseMsg)){
+        //     numOfRepetition++;
+        // }
+        // else{
+        //    lastBaseMsg = msg;
+        //    numOfRepetition = 0;
+        // }
+
+        // if(numOfRepetition >= 5)
+        //     this.chartdata1 = [{'value':'', 'color':'rgba(255,0,0,0.5)'}, {'value':'', 'color':'rgba(255,255,0,0.5)'}, {'value':'', 'color':'rgba(0,255,0,0.5)'}, {'value':'', 'color':'rgba(0,255,0,0.5)'}, {'value':'', 'color':'rgba(0,255,0,0.5)'}, {'value':'', 'color':'rgba(0,255,0,0.5)'}, {'value':'', 'color':'rgba(0,255,0,0.5)'}, {'value':'', 'color':'rgba(0,255,0,0.5)'}, {'value':'', 'color':'rgba(0,255,0,0.5)'}, {'value':'', 'color':'rgba(0,255,0,0.5)'}];
+
+        var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "State"; });
+        // Pull out values
+        data.forEach(function(d) {
+            d.ages = ageNames.map(function(name) { return {name: name, value: d[name][0], color: d[name][1]}; });
+        });
+
+        var state = svg.selectAll(".bar-group")
+            .data(data)
+
+        state.selectAll(".d3-bar")
+            .data(function(d) {return d.ages; })
+            .transition()
+            .duration(500)
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); })
+            .style("fill", function(d) {return d.color; });
+    }
 };
