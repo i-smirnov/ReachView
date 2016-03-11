@@ -204,6 +204,7 @@ function barChart() {
         
     var svg;
     var y;
+    var x0;
     var height = 220;
     var data = [];
     var currentLabels = [];
@@ -224,7 +225,7 @@ function barChart() {
         // ------------------------------
 
         // Horizontal
-        var x0 = d3.scale.ordinal()
+        x0 = d3.scale.ordinal()
             .rangeRoundBands([0, width], .1);
 
         var x1 = d3.scale.ordinal()
@@ -312,17 +313,6 @@ function barChart() {
             var verticalAxis = svg.append("g")
                 .attr("class", "d3-axis d3-axis-vertical d3-axis-strong")
                 .call(yAxis);
-
-            // Add text label
-            verticalAxis.append("text")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 10)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .style("fill", "#999")
-                .style("font-size", 12)
-                .text("Level");
-
 
             // Add bars
             // ------------------------------
@@ -549,6 +539,8 @@ function barChart() {
         data.forEach(function(d) {
             d.ages = ageNames.map(function(name) { return {name: name, value: d[name][0], color: d[name][1]}; });
         });
+
+        x0.domain(data.map(function(d) { return d.State; }));
 
         var state = svg.selectAll(".bar-group")
             .data(data)
