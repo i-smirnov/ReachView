@@ -4,6 +4,7 @@ function Chart() {
         this.path = '';
         this.x = '';
         this.line = '';
+        this.area = '';
         var x;
         var y;
 
@@ -56,7 +57,7 @@ function Chart() {
             .y(function(d, i) { return y(d); });
 
         // Area
-        var area = d3.svg.area()
+        this.area = d3.svg.area()
             .interpolate(interpolation)
             .x(function(d,i) { 
                 return x(i); 
@@ -117,7 +118,7 @@ function Chart() {
 
         // Add path based on chart type
         if(chartType == "area") {
-            this.path.attr("d", area).attr('class', 'd3-area').style("fill", color); // area
+            this.path.attr("d", this.area).attr('class', 'd3-area').style("fill", color); // area
         }
         else {
             this.path.attr("d", this.line).attr("class", "d3-line d3-line-medium").style('stroke', color); // line
@@ -170,7 +171,7 @@ function Chart() {
             svg.select(".d3-line").attr("d", this.line);
 
             // Area
-            svg.select(".d3-area").attr("d", area);
+            svg.select(".d3-area").attr("d", this.area);
         }
     }
 
@@ -179,7 +180,7 @@ function Chart() {
 
     this.update = function(element, chartType, qty, height, interpolation, duration, color, msg) {
 
-        this.data.push(parseFloat(msg));
+        this.data.push(parseFloat(msg)*qty);
         // pop the old data point off the front
         this.data.shift();
         // Redraw the path and slide it to the left
@@ -192,7 +193,7 @@ function Chart() {
 
         // Update path type
         if(chartType == "area") {
-            this.path.attr("d", area).attr('class', 'd3-area').style("fill", color)
+            this.path.attr("d", this.area).attr('class', 'd3-area').style("fill", color)
         }
         else {
             this.path.attr("d", this.line).attr("class", "d3-line d3-line-medium").style('stroke', color);
@@ -205,7 +206,7 @@ function barChart() {
     var svg;
     var y;
     var x0;
-    var height = 220;
+    var height = 250;
     var data = [];
     var currentLabels = [];
     // Chart setup
@@ -216,7 +217,7 @@ function barChart() {
 
         // Define main variables
         var d3Container = d3.select(element),
-            margin = {top: 5, right: 10, bottom: 20, left: 40},
+            margin = {top: 5, right: 10, bottom: 20, left: 20},
             width = d3Container.node().getBoundingClientRect().width - margin.left - margin.right;
 
         height = height - margin.top - margin.bottom - 5;
@@ -247,6 +248,8 @@ function barChart() {
         var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
+            .ticks(5)
+            .tickSize(-width, 0, 0)
             .tickFormat(d3.format(".2s"));
 
 
@@ -446,13 +449,13 @@ function barChart() {
                 // determine the fill color depending on the sat level
                 switch(true) {
                     case (current_level < 30):
-                        current_fillcolor = "#FF766C"; // Red
+                        current_fillcolor = "#EF5350"; // Red
                         break;
                     case (current_level >= 30 && current_level <= 45):
-                        current_fillcolor = "#FFEA5B"; // Yellow
+                        current_fillcolor = "#FFB74D"; // Yellow
                         break;
                     case (current_level >= 45):
-                        current_fillcolor = "#44D62C"; // Green
+                        current_fillcolor = "#43A047"; // Green
                         break;
                 }
 
@@ -479,7 +482,8 @@ function barChart() {
 
         svg.selectAll("text")
             .data(data)
-            .text(function(d) {return d.State;});
+            .text(function(d) {return d.State;})
+            .style("font-size","10px");
 
         var state = svg.selectAll(".bar-group")
             .data(data)

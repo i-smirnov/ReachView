@@ -158,10 +158,16 @@ $(document).ready(function () {
     // ####################### HANDLE SATELLITE LEVEL BROADCAST #######################
 
     chart = new Chart();
-    chart.sparkline("#new-visitors", "line", 30, 60, "basis", 750, "#26A69A");
+    chart.sparkline("#new-visitors", "line", 30, 40, "basis", 750, "#26A69A");
+
+    valid_satellites = new Chart();
+    valid_satellites.sparkline("#valid_satellites", "area", 30, 40, "basis", 750, "#26A69A");
+
+    age_of_differential = new Chart();
+    age_of_differential.sparkline("#age_of_differential", "area", 30, 40, "basis", 750, "#26A69A");
 
     barChart = new barChart();
-    barChart.barGrouped('#d3-bar-grouped', 220);
+    barChart.barGrouped('#d3-bar-grouped');
 
     socket.on("satellite broadcast rover", function(msg) {
         // check if the browser tab and app tab are active
@@ -173,12 +179,18 @@ $(document).ready(function () {
             console.groupEnd();
 
             var average = 0;
-            for (var i in msg)
-                average += parseFloat(msg[i]);
+            var msg_lenght = 0;
 
-            chart.update("#new-visitors", "line", 30, 60, "basis", 750, "#26A69A", 0.1*average);
-            
-            var data11 = [{'State':'G2', 'Rover':['40', 'blue'], 'Base':['10', 'green']}, {'State':'G3', 'Rover':['20', 'blue'], 'Base':['0', 'yellow']}, {'State':'G4', 'Rover':['20', 'blue'], 'Base':['0', 'yellow']}];
+            for (var i in msg){
+                average += parseFloat(msg[i]);
+                msg_lenght++;
+            }
+
+            average/=msg_lenght;
+
+            $('#average_value').text(average.toFixed(1));
+
+            chart.update("#new-visitors", "line", 1, 40, "basis", 750, "#26A69A", average);
             barChart.roverUpdate(msg);
         }
     });
@@ -205,6 +217,12 @@ $(document).ready(function () {
                 for (var k in msg)
                     console.log(k + ':' + msg[k]);
             console.groupEnd();
+
+            $('#valid_satellites_value').text(msg['satellites_valid']);
+            $('#age_value').text(msg['age_of_differential']);
+
+            valid_satellites.update("#valid_satellites", "area", 1, 40, "basis", 750, "#26A69A", msg['satellites_valid']);
+            age_of_differential.update("#age_of_differential", "area", 50, 40, "basis", 750, "#26A69A", msg['age_of_differential']);
             // updateCoordinateGrid(msg);
         }
     });
