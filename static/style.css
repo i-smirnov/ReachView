@@ -137,6 +137,9 @@ li.nav_log_container{
     margin: 0;
     text-align: right;
 }
+#d3-bar-grouped .d3-axis-vertical .tick:first-child text{
+	display: none;
+}
 @media only screen and (max-width:760px){
     .ui-listview > li h2{
         font-size: 0.75em;

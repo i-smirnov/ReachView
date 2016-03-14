@@ -158,16 +158,19 @@ $(document).ready(function () {
     // ####################### HANDLE SATELLITE LEVEL BROADCAST #######################
 
     chart = new Chart();
-    chart.sparkline("#new-visitors", "line", 30, 40, "basis", 750, "#26A69A");
+    chart.sparkline("#new-visitors", "area", 30, 40, "basis", 750, "#009688");
 
     valid_satellites = new Chart();
-    valid_satellites.sparkline("#valid_satellites", "area", 30, 40, "basis", 750, "#26A69A");
+    valid_satellites.sparkline("#valid_satellites", "area", 30, 40, "basis", 750, "#FF7043");
 
     age_of_differential = new Chart();
-    age_of_differential.sparkline("#age_of_differential", "area", 30, 40, "basis", 750, "#26A69A");
+    age_of_differential.sparkline("#age_of_differential", "area", 30, 40, "basis", 750, "#5C6BC0 ");
 
     barChart = new barChart();
     barChart.barGrouped('#d3-bar-grouped');
+
+    pieChart = new pieChart();
+    pieChart.progressCounter('#hours-available-progress', 38, 12, "#F06292", 0.68, "icon-watch text-pink-400", '', '');
 
     socket.on("satellite broadcast rover", function(msg) {
         // check if the browser tab and app tab are active
@@ -188,10 +191,19 @@ $(document).ready(function () {
 
             average/=msg_lenght;
 
-            $('#average_value').text(average.toFixed(1));
-
-            chart.update("#new-visitors", "line", 1, 40, "basis", 750, "#26A69A", average);
+            // chart.update("#new-visitors", "line", 1, 40, "basis", 750, "#26A69A", average);
             barChart.roverUpdate(msg);
+
+            if(typeof lastAverage == "undefined")
+                lastAverage = 0;
+
+            // console.log(lastAverage + ' ' + average);
+            pieChart.update(lastAverage/50, average/50);
+            // $('.icon-watch').text(average.toFixed(1));
+
+
+            lastAverage = average;
+            // console.log(lastAverage);
         }
     });
 
@@ -218,11 +230,19 @@ $(document).ready(function () {
                     console.log(k + ':' + msg[k]);
             console.groupEnd();
 
-            $('#valid_satellites_value').text(msg['satellites_valid']);
-            $('#age_value').text(msg['age_of_differential']);
+            $('#valid_satellites_value').text(msg['# of valid satellites']);
+            $('#age_value').text(msg['age of differential (s)']);
+            
+            // GDOP/PDOP/HDOP/VDOP:0.0,0.0,0.0,0.0
+            console.log(msg['GDOP/PDOP/HDOP/VDOP']);
+            var DOP = msg['GDOP/PDOP/HDOP/VDOP'].split(',');
 
-            valid_satellites.update("#valid_satellites", "area", 1, 40, "basis", 750, "#26A69A", msg['satellites_valid']);
-            age_of_differential.update("#age_of_differential", "area", 50, 40, "basis", 750, "#26A69A", msg['age_of_differential']);
+            $('#average_value').text(DOP[1]);
+
+            chart.update("#new-visitors", "area", 20, 40, "basis", 750, "#009688", DOP[1]);
+
+            valid_satellites.update("#valid_satellites", "area", 1, 40, "basis", 750, "#FF7043", msg['# of valid satellites']);
+            age_of_differential.update("#age_of_differential", "area", 50, 40, "basis", 750, "#5C6BC0", msg['age of differential (s)']);
             // updateCoordinateGrid(msg);
         }
     });

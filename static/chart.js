@@ -271,16 +271,16 @@ function barChart() {
         // Load data
         // ------------------------------
             data = [
-                {'State':'G1', 'Rover':['0', 'red'], 'Base':['0', 'green']},
-                {'State':'G2', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']}, 
-                {'State':'G3', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
-                {'State':'G4', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
-                {'State':'G5', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
-                {'State':'G6', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
-                {'State':'G7', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
-                {'State':'G8', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
-                {'State':'G9', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']},
-                {'State':'G10', 'Rover':['0', 'blue'], 'Base':['0', 'yellow']}
+                {'State':'G1', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']},
+                {'State':'G2', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']}, 
+                {'State':'G3', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']},
+                {'State':'G4', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']},
+                {'State':'G5', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']},
+                {'State':'G6', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']},
+                {'State':'G7', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']},
+                {'State':'G8', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']},
+                {'State':'G9', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']},
+                {'State':'G10', 'Rover':['0', 'transparent'], 'Base':['0', 'transparent']}
             ];
             var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "State"; });
 
@@ -452,10 +452,10 @@ function barChart() {
                         current_fillcolor = "#EF5350"; // Red
                         break;
                     case (current_level >= 30 && current_level <= 45):
-                        current_fillcolor = "#FFB74D"; // Yellow
+                        current_fillcolor = "#FF7043"; // Yellow
                         break;
                     case (current_level >= 45):
-                        current_fillcolor = "#43A047"; // Green
+                        current_fillcolor = "#009688"; // Green
                         break;
                 }
 
@@ -558,3 +558,128 @@ function barChart() {
             .style("fill", function(d) {return d.color; });
     }
 };
+
+    // Initialize charts
+    
+
+function pieChart(){
+
+    var foreground;
+    var arc;
+    var twoPi = Math.PI * 2;
+    var front;
+    var numberText;
+    var formatPercent = d3.format('.0%');
+    var svg;
+    // Chart setup
+    this.progressCounter = function(element, radius, border, color, end, iconClass, textTitle, textAverage) {
+
+        // Basic setup
+        // ------------------------------
+
+        // Main variables
+        var d3Container = d3.select(element),
+            startPercent = 0,
+            iconSize = 32,
+            endPercent = end,
+            boxSize = radius * 2;
+
+        // Values count
+        var count = Math.abs((endPercent - startPercent) / 0.01);
+
+        // Values step
+        var step = endPercent < startPercent ? -0.01 : 0.01;
+
+        // Create chart
+        // ------------------------------
+
+        // Add SVG element
+        var container = d3Container.append('svg');
+
+        // Add SVG group
+        svg = container
+            .attr('width', boxSize)
+            .attr('height', boxSize)
+            .append('g')
+                .attr('transform', 'translate(' + (boxSize / 2) + ',' + (boxSize / 2) + ')');
+
+
+
+        // Construct chart layout
+        // ------------------------------
+
+        // Arc
+        arc = d3.svg.arc()
+            .startAngle(0)
+            .innerRadius(radius)
+            .outerRadius(radius - border);
+
+        // Paths
+        // ------------------------------
+
+        // Background path
+        svg.append('path')
+            .attr('class', 'd3-progress-background')
+            .attr('d', arc.endAngle(twoPi))
+            .style('fill', '#eee');
+
+        // Foreground path
+        foreground = svg.append('path')
+            .attr('class', 'd3-progress-foreground')
+            .attr('filter', 'url(#blur)')
+            .style('fill', color)
+            .style('stroke', color);
+
+        // Front path
+        front = svg.append('path')
+            .attr('class', 'd3-progress-front')
+            .style('fill', color)
+            .style('fill-opacity', 1);
+
+        // Text
+        // ------------------------------
+
+        // Percentage text value
+        numberText = d3.select(element)
+            .append('h2')
+                .attr('class', 'mt-15 mb-5')
+
+        // Icon
+        d3.select(element)
+            .append("i")
+                .attr("class", iconClass + " counter-icon")
+                .attr('style', 'top: ' + ((boxSize - iconSize) / 2) + 'px');
+
+        // Title
+        d3.select(element)
+            .append('div')
+                .text(textTitle);
+
+        // Subtitle
+        d3.select(element)
+            .append('div')
+                .attr('class', 'text-size-small text-muted')
+                .text(textAverage);
+    }
+
+
+        this.update = function(startPercent, endPercent){
+            var progress = startPercent;
+            var count = Math.abs((endPercent - startPercent) / 0.01);
+            var step = endPercent < startPercent ? -0.01 : 0.01;
+
+            (function loops() {
+                foreground.attr('d', arc.endAngle(twoPi * progress));
+                front.attr('d', arc.endAngle(twoPi * progress));
+                numberText.text((endPercent*50).toFixed(1));
+
+                // svg.selectAll("i").text('1');
+
+                if (count > 0) {
+                    count--;
+                    progress += step;
+                    setTimeout(loops, 10);
+                }
+            })();
+        }
+}

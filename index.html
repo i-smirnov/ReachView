@@ -151,141 +151,123 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
 
                     <!-- Main charts -->
                     <div class="row">
-                        <div class="col-lg-8">
-<!--                             <div class="col-lg-4">
-                                <div class="panel panel-flat">
-                                    <div class="panel-heading">
-                                       <ul class="list-inline text-center">
-                                            <li><h4>AVERAGE SNR</h4></li>
-                                            <li><h3><strong  id="average_value"></strong></h3></li>
-                                        </ul>
-                                    </div>
+                        <div class="col-lg-7">
 
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-lg-12">
+                            <!-- Traffic sources -->
+                            <div class="panel panel-flat">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Traffic sources</h6>
+                                </div>
 
-                                                <div class="col-lg-10 col-lg-offset-1">
-                                                    <div class="content-group" id="new-visitors"></div>
-                                                </div>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <ul class="list-inline text-center">
+                                                <li>
+                                                    <a href="#" class="btn border-teal text-teal btn-flat btn-rounded btn-icon btn-xs valign-text-bottom"><i class="icon-stats-bars3"></i></a>
+                                                </li>
+                                                <li class="text-left">
+                                                    <div class="text-semibold">PDOP</div>
+                                                    <div class="text-muted"><strong  id="average_value"></strong></div>
+                                                </li>
+                                            </ul>
+
+                                            <div class="col-lg-10 col-lg-offset-1">
+                                                <div class="content-group" id="new-visitors"></div>
+                                                
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4">
+                                            <ul class="list-inline text-center">
+                                                <li>
+                                                    <a href="#" class="btn border-warning-400 text-warning-400 btn-flat btn-rounded btn-icon btn-xs valign-text-bottom"><i class="icon-satellite-dish2"></i></a>
+                                                </li>
+                                                <li class="text-left">
+                                                    <div class="text-semibold">Valid satellites</div>
+                                                    <div class="text-muted"><strong  id="valid_satellites_value"></strong></div>
+                                                </li>
+                                            </ul>
+
+                                            <div class="col-lg-10 col-lg-offset-1">
+                                                <div class="content-group" id="valid_satellites"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4">
+                                            <ul class="list-inline text-center">
+                                                <li>
+                                                    <a href="#" class="btn border-indigo-400 text-indigo-400 btn-flat btn-rounded btn-icon btn-xs valign-text-bottom"><i class="icon-watch2"></i></a>
+                                                </li>
+                                                <li class="text-left">
+                                                    <div class="text-semibold">Age of diff</div>
+                                                    <div class="text-muted"><strong  id="age_value"></strong></div>
+                                                </li>
+                                            </ul>
+
+                                            <div class="col-lg-10 col-lg-offset-1">
+                                                <div class="content-group" id="age_of_differential"></div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="position-relative" id="traffic-sources"></div>
                                 </div>
 
-                            </div> -->
+                                <div class="position-relative" id="d3-bar-grouped"></div>
+                            </div>
+                            <!-- /traffic sources -->
 
-<!--                             <div class="col-lg-4">
-                                <div class="panel panel-flat">
-                                    <div class="panel-heading">
-                                       <ul class="list-inline text-center">
-                                            <li><h4>VALID SATELLITES</h4></li>
-                                            <li><h3><strong  id="valid_satellites_value"></strong></h3></li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-
-                                                <div class="col-lg-10 col-lg-offset-1">
-                                                    <div class="content-group" id="valid_satellites"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="position-relative" id="traffic-sources"></div>
-                                </div>
-                            </div> -->
-
-<!--                             <div class="col-lg-4">
-                                <div class="panel panel-flat">
-                                    <div class="panel-heading">
-                                       <ul class="list-inline text-center">
-                                            <li><h4>AGE OF DIFFERENTIAL</h4></li>
-                                            <li><h3><strong  id="age_value"></strong></h3></li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-
-                                                <div class="col-lg-10 col-lg-offset-1">
-                                                    <div class="content-group" id="age_of_differential"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="position-relative" id="traffic-sources"></div>
-                                </div>
-                            </div> -->
+                        </div>
+<!--                         <div class="col-lg-8">
                             <div class="col-lg-12">
                                 <div class="panel panel-flat">
                                     <div class="col-lg-4">
-                                        <!-- <div class="panel panel-flat"> -->
-                                            <div class="panel-heading">
-                                               <ul class="list-inline text-center">
-                                                    <li><h4>AVERAGE SNR</h4></li>
-                                                    <li><h3><strong  id="average_value"></strong></h3></li>
-                                                </ul>
-                                            </div>
+                                        <ul class="list-inline text-center">
+                                            <li>
+                                                <a href="#" class="btn border-teal text-teal btn-flat btn-rounded btn-icon btn-xs valign-text-bottom"><i class="icon-plus3"></i></a>
+                                            </li>
+                                            <li class="text-left">
+                                                <div class="text-semibold">AVERAGE SNR</div>
+                                                <div class="text-muted"><strong  id="average_value"></strong></div>
+                                            </li>
+                                        </ul>
 
-                                            <div class="container-fluid">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-
-                                                        <div class="col-lg-10 col-lg-offset-1">
-                                                            <div class="content-group" id="new-visitors"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <!-- </div> -->
-
+                                        <div class="col-lg-10 col-lg-offset-1">
+                                            <div class="content-group" id="new-visitors"></div>
+                                        </div>
                                     </div>
+
                                     <div class="col-lg-4">
-                                        <div class="panel-heading">
-                                           <ul class="list-inline text-center">
-                                                <li><h4>VALID SATELLITES</h4></li>
-                                                <li><h3><strong  id="valid_satellites_value"></strong></h3></li>
-                                            </ul>
-                                        </div>
+                                        <ul class="list-inline text-center">
+                                            <li>
+                                                <a href="#" class="btn border-warning-400 text-warning-400 btn-flat btn-rounded btn-icon btn-xs valign-text-bottom"><i class="icon-watch2"></i></a>
+                                            </li>
+                                            <li class="text-left">
+                                                <div class="text-semibold">VALID SATELLITES</div>
+                                                <div class="text-muted"><strong  id="valid_satellites_value"></strong></div>
+                                            </li>
+                                        </ul>
 
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-lg-12">
-
-                                                    <div class="col-lg-10 col-lg-offset-1">
-                                                        <div class="content-group" id="valid_satellites"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="col-lg-10 col-lg-offset-1">
+                                            <div class="content-group" id="valid_satellites"></div>
                                         </div>
                                     </div>
+
                                     <div class="col-lg-4">
-                                        <div class="panel-heading">
-                                           <ul class="list-inline text-center">
-                                                <li><h4>AGE OF DIFFERENTIAL</h4></li>
-                                                <li><h3><strong  id="age_value"></strong></h3></li>
-                                            </ul>
-                                        </div>
+                                        <ul class="list-inline text-center">
+                                            <li>
+                                                <a href="#" class="btn border-indigo-400 text-indigo-400 btn-flat btn-rounded btn-icon btn-xs valign-text-bottom"><i class="icon-people"></i></a>
+                                            </li>
+                                            <li class="text-left">
+                                                <div class="text-semibold">AGE OF DIFFERENTIAL</div>
+                                                <div class="text-muted"><strong  id="age_value"></strong></div>
+                                            </li>
+                                        </ul>
 
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-lg-12">
-
-                                                    <div class="col-lg-10 col-lg-offset-1">
-                                                        <div class="content-group" id="age_of_differential"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="col-lg-10 col-lg-offset-1">
+                                            <div class="content-group" id="age_of_differential"></div>
                                         </div>
                                     </div>
+
                                     <div class="panel-body">
                                         <div class="chart-container">
                                             <div class="chart" id="d3-bar-grouped"></div>
@@ -293,13 +275,30 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <!-- /main charts -->
 
 
 
+                            <!-- Progress counters -->
+                            <div class="row">
+                                <div class="col-md-6">
 
+                                    <!-- Available hours -->
+                                    <div class="panel text-center">
+                                        <div class="panel-body">
+                                            <!-- Progress counter -->
+                                            <div class="content-group-sm svg-center position-relative" id="hours-available-progress"></div>
+                                            <!-- /progress counter -->
+
+                                        </div>
+                                    </div>
+                                    <!-- /available hours -->
+
+                                </div>
+                            </div>
+                            <!-- /progress counters -->
 
                     <!-- Footer -->
                     <div class="footer text-muted">
