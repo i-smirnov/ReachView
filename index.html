@@ -56,7 +56,12 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
     <script type="text/javascript" src="static/assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
     <script type="text/javascript" src="static/assets/js/plugins/ui/moment/moment.min.js"></script>
     <script type="text/javascript" src="static/assets/js/plugins/pickers/daterangepicker.js"></script>
+    <!-- Theme JS files -->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 
+    <script type="text/javascript" src="static/assets/js/core/app.js"></script>
+<!--     <script type="text/javascript" src="static/assets/js/maps/google/drawings/circles.js"></script> -->
+    <!-- /theme JS files -->
     <script type="text/javascript" src="static/assets/js/core/app.js"></script>
     <!-- <script type="text/javascript" src="static/assets/js/pages/dashboard.js"></script> -->
     <script type="text/javascript" src="{{ url_for('static', filename='chart.js') }}" charset="utf-8"></script>
@@ -280,7 +285,18 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
                     <!-- /main charts -->
 
 
+                        <div class='row'>
+                          <div class="panel panel-flat">
+                            <div class="panel-heading">
+                                <h5 class="panel-title">Circle shapes</h5>
+                            </div>
 
+                            <div class="panel-body">
+
+                                <div class="map-container map-drawing-circles"></div>
+                            </div>
+                        </div>
+                        </div>
                             <!-- Progress counters -->
                             <div class="row">
                                 <div class="col-md-6">

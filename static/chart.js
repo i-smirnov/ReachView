@@ -683,3 +683,58 @@ function pieChart(){
             })();
         }
 }
+
+function googleMap(){ 
+    var citymap = {};
+    var map;
+
+    this.create = function(lat, lon, round){
+
+        // First, create an object containing LatLng and population for each city.
+        
+        citymap['wroclaw'] = {
+            center: new google.maps.LatLng(lat, lon),
+            population: round
+        };
+
+        // Initialize
+        var cityCircle;
+        function initialize() {
+
+            // Options
+            var mapOptions = {
+                zoom: 6,
+                center: new google.maps.LatLng(lat, lon),
+                mapTypeId: google.maps.MapTypeId.TERRAIN
+            };
+
+            // Apply options
+            map = new google.maps.Map($('.map-drawing-circles')[0], mapOptions);
+
+
+            // Construct the circle for each value in citymap.
+            // Note: We scale the area of the circle based on the population.
+            for (var city in citymap) {
+
+                // Options
+                var populationOptions = {
+                    strokeColor: '#b41b1b',
+                    strokeOpacity: 0.5,
+                    strokeWeight: 1,
+                    fillColor: '#b41b1b',
+                    fillOpacity: 0.2,
+                    map: map,
+                    center: citymap[city].center,
+                    radius: Math.sqrt(citymap[city].population) * 100
+                };
+
+                // Add the circle for this city to the map.
+                cityCircle = new google.maps.Circle(populationOptions);
+            }
+        }
+
+        // Load map
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+    };
+}

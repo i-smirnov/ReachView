@@ -172,6 +172,10 @@ $(document).ready(function () {
     pieChart = new pieChart();
     pieChart.progressCounter('#hours-available-progress', 38, 12, "#F06292", 0.68, "icon-watch text-pink-400", '', '');
 
+    map = new googleMap();
+    map.create(51.112, 17.052, 271485);
+
+
     socket.on("satellite broadcast rover", function(msg) {
         // check if the browser tab and app tab are active
         if ((active_tab == "Status") && (isActive == true)) {
