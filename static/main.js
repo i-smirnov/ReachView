@@ -173,8 +173,9 @@ $(document).ready(function () {
     pieChart.progressCounter('#hours-available-progress', 38, 12, "#F06292", 0.68, "icon-watch text-pink-400", '', '');
 
     map = new googleMap();
-    map.create(51.112, 17.052, 271485);
+    map.create(59.96926729, 30.30901078, 0.00001, 30);
 
+    setTimeout(function(){map.setZoom();}, 2000);
 
     socket.on("satellite broadcast rover", function(msg) {
         // check if the browser tab and app tab are active
@@ -229,6 +230,8 @@ $(document).ready(function () {
         // check if the browser tab and app tab
         if ((active_tab == "Status") && (isActive == true)) {
 
+            var coordinates = msg['pos llh single (deg,m) rover'].split(',');
+
             console.groupCollapsed('Coordinate msg received:');
                 for (var k in msg)
                     console.log(k + ':' + msg[k]);
@@ -247,6 +250,9 @@ $(document).ready(function () {
 
             valid_satellites.update("#valid_satellites", "area", 1, 40, "basis", 750, "#FF7043", msg['# of valid satellites']);
             age_of_differential.update("#age_of_differential", "area", 50, 40, "basis", 750, "#5C6BC0", msg['age of differential (s)']);
+
+            map.update(coordinates[0], coordinates[1]);
+
             // updateCoordinateGrid(msg);
         }
     });

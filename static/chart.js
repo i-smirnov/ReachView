@@ -703,38 +703,51 @@ function googleMap(){
 
             // Options
             var mapOptions = {
-                zoom: 6,
+                zoom: 30,
                 center: new google.maps.LatLng(lat, lon),
                 mapTypeId: google.maps.MapTypeId.TERRAIN
             };
 
             // Apply options
             map = new google.maps.Map($('.map-drawing-circles')[0], mapOptions);
-
-
-            // Construct the circle for each value in citymap.
-            // Note: We scale the area of the circle based on the population.
-            for (var city in citymap) {
-
-                // Options
-                var populationOptions = {
-                    strokeColor: '#b41b1b',
-                    strokeOpacity: 0.5,
-                    strokeWeight: 1,
-                    fillColor: '#b41b1b',
-                    fillOpacity: 0.2,
-                    map: map,
-                    center: citymap[city].center,
-                    radius: Math.sqrt(citymap[city].population) * 100
-                };
-
-                // Add the circle for this city to the map.
-                cityCircle = new google.maps.Circle(populationOptions);
-            }
         }
 
         // Load map
-        google.maps.event.addDomListener(window, 'load', initialize);
+        // google.maps.event.addDomListener(window, 'load', initialize);
+        initialize();
 
     };
+
+    this.setZoom = function(){
+        map.setZoom(20);
+    }
+
+    this.setCenter = function(){
+        var myLatlng = {lat: -25.363, lng: 131.044};
+        map.setCenter(myLatlng);
+    }
+
+
+
+    this.update = function(lat, lon){
+                    // Construct the circle for each value in citymap.
+        // Note: We scale the area of the circle based on the population.
+        for (var city in citymap) {
+
+            // Options
+            var populationOptions = {
+                strokeColor: '#b41b1b',
+                strokeOpacity: 0.5,
+                strokeWeight: 1,
+                fillColor: '#b41b1b',
+                fillOpacity: 0.2,
+                map: map,
+                center: new google.maps.LatLng(lat, lon),
+                radius: Math.sqrt(citymap[city].population) * 100
+            };
+
+            // Add the circle for this city to the map.
+            cityCircle = new google.maps.Circle(populationOptions);
+        }
+    }
 }
