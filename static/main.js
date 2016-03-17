@@ -26,6 +26,11 @@
 var defaultConfigs = ['reach_single_default.conf', 'reach_kinematic_default.conf', 'reach_base_default.conf'];
 
 var isActive = true;
+var mapCenter = false;
+var mapCenterSwitch = true;
+var path = new Array;
+var newPath = new Array;
+var oldPath = new Array;
 
 // ############################### MAIN ###############################
 
@@ -155,6 +160,19 @@ $(document).ready(function () {
     //     available_configs_list.change();
     // });
 
+    var realtime = document.querySelector('.switcher');
+    var realtimeInit = new Switchery(realtime);
+    realtime.onchange = function() {
+        if(realtime.checked) {
+            intervalIds.push(setInterval(function() { interval() }, 5000));
+        }
+        else {
+            for (var i=0; i < intervalIds.length; i++) {
+                clearInterval(intervalIds[i]);
+            }
+        }
+    };
+
     // ####################### HANDLE SATELLITE LEVEL BROADCAST #######################
 
     chart = new Chart();
@@ -173,9 +191,14 @@ $(document).ready(function () {
     pieChart.progressCounter('#hours-available-progress', 38, 12, "#F06292", 0.68, "icon-watch text-pink-400", '', '');
 
     map = new googleMap();
-    map.create(59.96926729, 30.30901078, 0.00001, 30);
+    map.create(59.96926729, 30.30901078);
 
-    setTimeout(function(){map.setZoom();}, 2000);
+    $(document).on("change", "#followCoordinate", function(e) {
+        if($(this).is(":checked"))
+            mapCenterSwitch = false;
+        else
+            mapCenterSwitch = true;
+    })
 
     socket.on("satellite broadcast rover", function(msg) {
         // check if the browser tab and app tab are active
@@ -232,7 +255,7 @@ $(document).ready(function () {
 
             var coordinates = msg['pos llh single (deg,m) rover'].split(',');
 
-            console.groupCollapsed('Coordinate msg received:');
+            console.groupCollapsed('Status msg received:');
                 for (var k in msg)
                     console.log(k + ':' + msg[k]);
             console.groupEnd();
@@ -251,9 +274,28 @@ $(document).ready(function () {
             valid_satellites.update("#valid_satellites", "area", 1, 40, "basis", 750, "#FF7043", msg['# of valid satellites']);
             age_of_differential.update("#age_of_differential", "area", 50, 40, "basis", 750, "#5C6BC0", msg['age of differential (s)']);
 
-            map.update(coordinates[0], coordinates[1]);
+            if(!mapCenter || !mapCenterSwitch){
+                console.log(coordinates[0] + ' ' + coordinates[1]);
+                map.setCenter(coordinates[0], coordinates[1]);
+                mapCenter = true;
+            }
 
-            // updateCoordinateGrid(msg);
+            map.update(coordinates[0], coordinates[1], 0.000001);
+
+            path.push(new google.maps.LatLng(coordinates[0], coordinates[1]));
+            newPath.push(new google.maps.LatLng(coordinates[0], coordinates[1]));
+            oldPath.push(new google.maps.LatLng(coordinates[0], coordinates[1]));
+
+            if(newPath.length >= 3){
+                oldPath = [newPath[0], newPath[1]];
+                newPath.splice(0,1);
+                map.removeLine();
+                map.line(oldPath, 'rgba(255,0,0,0.3)');
+            }
+
+            if(newPath.length > 1){
+                map.line(newPath, 'rgba(255,0,0,1)');
+            }
         }
     });
 

@@ -685,17 +685,17 @@ function pieChart(){
 }
 
 function googleMap(){ 
-    var citymap = {};
     var map;
+    var flightPath;
 
-    this.create = function(lat, lon, round){
+    this.create = function(lat, lon){
 
         // First, create an object containing LatLng and population for each city.
         
-        citymap['wroclaw'] = {
-            center: new google.maps.LatLng(lat, lon),
-            population: round
-        };
+        // citymap['wroclaw'] = {
+        //     center: new google.maps.LatLng(lat, lon),
+        //     population: round
+        // };
 
         // Initialize
         var cityCircle;
@@ -722,17 +722,17 @@ function googleMap(){
         map.setZoom(20);
     }
 
-    this.setCenter = function(){
-        var myLatlng = {lat: -25.363, lng: 131.044};
+    this.setCenter = function(lat, lon){
+        var myLatlng = {lat: parseFloat(lat), lng: parseFloat(lon)};
         map.setCenter(myLatlng);
     }
 
 
 
-    this.update = function(lat, lon){
+    this.update = function(lat, lon, round){
                     // Construct the circle for each value in citymap.
         // Note: We scale the area of the circle based on the population.
-        for (var city in citymap) {
+        // for (var city in citymap) {
 
             // Options
             var populationOptions = {
@@ -743,11 +743,33 @@ function googleMap(){
                 fillOpacity: 0.2,
                 map: map,
                 center: new google.maps.LatLng(lat, lon),
-                radius: Math.sqrt(citymap[city].population) * 100
+                radius: Math.sqrt(round) * 100
             };
 
             // Add the circle for this city to the map.
             cityCircle = new google.maps.Circle(populationOptions);
-        }
+        // }
+    }
+
+    this.line = function(path, color){
+        flightPath = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            // strokeColor: '#FF0000',
+            strokeColor: color,
+            strokeOpacity: 1.0,
+            strokeWeight: 1
+        });
+
+        this.addLine();
+
+        return flightPath;
+    }
+
+    this.removeLine = function(){
+        flightPath.setMap(null);
+    }
+    this.addLine = function(){
+        flightPath.setMap(map);
     }
 }
