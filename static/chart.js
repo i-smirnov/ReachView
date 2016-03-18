@@ -687,6 +687,9 @@ function pieChart(){
 function googleMap(){ 
     var map;
     var flightPath;
+    var cityCircle;
+    lineArr = new Array;
+    pointArr = new Array;
 
     this.create = function(lat, lon){
 
@@ -698,7 +701,6 @@ function googleMap(){
         // };
 
         // Initialize
-        var cityCircle;
         function initialize() {
 
             // Options
@@ -727,8 +729,6 @@ function googleMap(){
         map.setCenter(myLatlng);
     }
 
-
-
     this.update = function(lat, lon, round){
                     // Construct the circle for each value in citymap.
         // Note: We scale the area of the circle based on the population.
@@ -748,6 +748,9 @@ function googleMap(){
 
             // Add the circle for this city to the map.
             cityCircle = new google.maps.Circle(populationOptions);
+
+            pointArr.push(cityCircle);
+
         // }
     }
 
@@ -763,13 +766,32 @@ function googleMap(){
 
         this.addLine();
 
-        return flightPath;
+        lineArr.push(flightPath);
     }
 
     this.removeLine = function(){
         flightPath.setMap(null);
     }
+
     this.addLine = function(){
         flightPath.setMap(map);
     }
+
+    this.clearMap = function(){
+        
+        for (var i = 0; i < lineArr.length; i++) {
+            lineArr[i].setMap(null);
+        }
+
+        for (var i = 0; i < pointArr.length; i++) {
+            pointArr[i].setMap(null);
+        }
+    }
+
+    // this.clear = function(markers) {
+    //     for (var i = 0; i < markers.length; i++) {
+    //         console.log(markers.length);
+    //         markers[i].setMap(null);
+    //     }
+    // }
 }

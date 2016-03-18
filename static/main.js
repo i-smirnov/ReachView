@@ -198,7 +198,16 @@ $(document).ready(function () {
             mapCenterSwitch = false;
         else
             mapCenterSwitch = true;
-    })
+    });
+    
+    $(document).on("click", "#clear_map", function(e) {
+        map.clearMap();
+        path = [];
+        newPath = [];
+        oldPath = [];
+
+        return false;
+    });
 
     socket.on("satellite broadcast rover", function(msg) {
         // check if the browser tab and app tab are active
@@ -263,8 +272,6 @@ $(document).ready(function () {
             $('#valid_satellites_value').text(msg['# of valid satellites']);
             $('#age_value').text(msg['age of differential (s)']);
             
-            // GDOP/PDOP/HDOP/VDOP:0.0,0.0,0.0,0.0
-            console.log(msg['GDOP/PDOP/HDOP/VDOP']);
             var DOP = msg['GDOP/PDOP/HDOP/VDOP'].split(',');
 
             $('#average_value').text(DOP[1]);
@@ -290,6 +297,7 @@ $(document).ready(function () {
                 oldPath = [newPath[0], newPath[1]];
                 newPath.splice(0,1);
                 map.removeLine();
+
                 map.line(oldPath, 'rgba(255,0,0,0.3)');
             }
 
