@@ -212,6 +212,8 @@ function barChart() {
     // Chart setup
     this.barGrouped = function(element) {
 
+        var yAxis;
+
         // Basic setup
         // ------------------------------
 
@@ -245,7 +247,7 @@ function barChart() {
             .orient("bottom");
 
         // Vertical
-        var yAxis = d3.svg.axis()
+        yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
             .ticks(5)
@@ -372,6 +374,7 @@ function barChart() {
             svg.attr("width", width + margin.left + margin.right);
 
 
+            yAxis.tickSize(-width, 0, 0);
             // Axes
             // -------------------------
 
@@ -381,6 +384,7 @@ function barChart() {
 
             // Horizontal axis
             svg.selectAll('.d3-axis-horizontal').call(xAxis);
+            svg.selectAll('.d3-axis-vertical').call(yAxis);
 
 
             // Chart elements
