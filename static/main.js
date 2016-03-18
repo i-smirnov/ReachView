@@ -162,16 +162,6 @@ $(document).ready(function () {
 
     var realtime = document.querySelector('.switcher');
     var realtimeInit = new Switchery(realtime);
-    realtime.onchange = function() {
-        if(realtime.checked) {
-            intervalIds.push(setInterval(function() { interval() }, 5000));
-        }
-        else {
-            for (var i=0; i < intervalIds.length; i++) {
-                clearInterval(intervalIds[i]);
-            }
-        }
-    };
 
     // ####################### HANDLE SATELLITE LEVEL BROADCAST #######################
 
@@ -282,7 +272,6 @@ $(document).ready(function () {
             age_of_differential.update("#age_of_differential", "area", 50, 40, "basis", 750, "#5C6BC0", msg['age of differential (s)']);
 
             if(!mapCenter || !mapCenterSwitch){
-                console.log(coordinates[0] + ' ' + coordinates[1]);
                 map.setCenter(coordinates[0], coordinates[1]);
                 mapCenter = true;
             }

@@ -748,7 +748,7 @@ function googleMap(){
 
             // Add the circle for this city to the map.
             cityCircle = new google.maps.Circle(populationOptions);
-
+            
             pointArr.push(cityCircle);
 
         // }
