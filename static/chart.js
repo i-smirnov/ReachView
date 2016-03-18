@@ -351,7 +351,9 @@ function barChart() {
         $(window).on('resize', resize);
 
         // Call function on sidebar width change
-        $('.sidebar-control').on('click', resize);
+        $('.sidebar-control').on('click', function(){
+           setTimeout(function(){$(window).resize()}, 200);
+        });
 
         // Resize function
         // 

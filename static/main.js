@@ -31,6 +31,7 @@ var mapCenterSwitch = true;
 var path = new Array;
 var newPath = new Array;
 var oldPath = new Array;
+var lastCoordinates = [0, 0];
 
 // ############################### MAIN ###############################
 
@@ -199,6 +200,12 @@ $(document).ready(function () {
         return false;
     });
 
+    $(document).on("click", "#last_coord_center", function(e) {
+        map.setCenter(lastCoordinates[0], lastCoordinates[1]);
+        
+        return false;
+    });
+
     socket.on("satellite broadcast rover", function(msg) {
         // check if the browser tab and app tab are active
         if ((active_tab == "Status") && (isActive == true)) {
@@ -281,6 +288,7 @@ $(document).ready(function () {
             path.push(new google.maps.LatLng(coordinates[0], coordinates[1]));
             newPath.push(new google.maps.LatLng(coordinates[0], coordinates[1]));
             oldPath.push(new google.maps.LatLng(coordinates[0], coordinates[1]));
+            lastCoordinates = [coordinates[0], coordinates[1]];
 
             if(newPath.length >= 3){
                 oldPath = [newPath[0], newPath[1]];
