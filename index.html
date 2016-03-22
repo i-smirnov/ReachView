@@ -52,10 +52,12 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
     <script type="text/javascript" src="static/assets/js/plugins/visualization/d3/d3.min.js"></script>
     <script type="text/javascript" src="static/assets/js/plugins/visualization/d3/d3_tooltip.js"></script>
     <script type="text/javascript" src="static/assets/js/plugins/forms/styling/switchery.min.js"></script>
+    <script type="text/javascript" src="static/assets/js/plugins/forms/styling/switch.min.js"></script>
     <script type="text/javascript" src="static/assets/js/plugins/forms/styling/uniform.min.js"></script>
     <script type="text/javascript" src="static/assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
     <script type="text/javascript" src="static/assets/js/plugins/ui/moment/moment.min.js"></script>
     <script type="text/javascript" src="static/assets/js/plugins/pickers/daterangepicker.js"></script>
+    <script type="text/javascript" src="static/assets/js/plugins/forms/selects/bootstrap_select.min.js"></script>
     <!-- Theme JS files -->
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 
@@ -250,11 +252,20 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
                           <div class="panel panel-flat">
                             <div class="panel-heading">
 <!--                                 <h5 class="panel-title">Circle shapes</h5> -->
-
                                 <div class="heading-elements">
                                     <form class="heading-form" action="#">
-                                    <a href="#" class="btn bg-teal-400" id="last_coord_center"><i class="icon-map position-left"></i> Focus on last</a>
-                                <a href="#" class="btn bg-teal-400" id="clear_map"><i class="icon-stack-cancel position-left"></i> Clear map</a>
+                                    <div class="form-group">
+                                        <select class="bootstrap-select visible_map_points" data-style="btn-default btn-xs" data-width="100%">
+                                            <option value="100">100 points</option>
+                                            <option value="50">50 points</option>
+                                            <option value="20">20 points</option>
+                                            <option value="10">10 points</option>
+                                        </select>
+                                    </div>
+                                        <a href="#" title="Last point" class="btn border-warning text-warning-400 btn-flat btn-icon btn-rounded" id="last_coord_center"><i class="icon-pin-alt"></i></a>
+                                        <a href="#" title="Clear map" class="btn border-warning text-warning-400 btn-flat btn-icon btn-rounded" id="clear_map"><i class="icon-stack-cancel"></i></a>
+                                        <!-- <a href="#" class="btn bg-teal-400 btn-xs" id="last_coord_center"><i class="icon-map position-left"></i> Focus on last</a> -->
+                                        <!-- <a href="#" class="btn bg-teal-400 btn-xs" id="clear_map"><i class="icon-stack-cancel position-left"></i> Clear map</a> -->
                                         <div class="form-group">
                                             <label class="checkbox checkbox-inline checkbox-switchery checkbox-right switchery-xs" style="padding-left: 10px;">
                                                 <input type="checkbox" class="switcher" id="followCoordinate">

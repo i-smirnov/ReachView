@@ -32,6 +32,7 @@ var path = new Array;
 var newPath = new Array;
 var oldPath = new Array;
 var lastCoordinates = [0, 0];
+var mapPointsNumber = 100;
 
 // ############################### MAIN ###############################
 
@@ -164,6 +165,13 @@ $(document).ready(function () {
     var realtime = document.querySelector('.switcher');
     var realtimeInit = new Switchery(realtime);
 
+    $.fn.selectpicker.defaults = {
+        iconBase: '',
+        tickIcon: 'icon-checkmark3'
+    }
+
+    $('.bootstrap-select').selectpicker();
+
     // ####################### HANDLE SATELLITE LEVEL BROADCAST #######################
 
     chart = new Chart();
@@ -184,6 +192,10 @@ $(document).ready(function () {
     map = new googleMap();
     map.create(59.96926729, 30.30901078);
 
+    $(document).on("change", ".visible_map_points", function(e) {
+        mapPointsNumber = $(this).val();
+    })
+
     $(document).on("change", "#followCoordinate", function(e) {
         if($(this).is(":checked"))
             mapCenterSwitch = false;
@@ -192,7 +204,7 @@ $(document).ready(function () {
     });
     
     $(document).on("click", "#clear_map", function(e) {
-        map.clearMap();
+        map.clearMap(0);
         path = [];
         newPath = [];
         oldPath = [];
@@ -244,6 +256,8 @@ $(document).ready(function () {
     socket.on("satellite broadcast base", function(msg) {
         // check if the browser tab and app tab are active
         if ((active_tab == "Status") && (isActive == true)) {
+            
+
             console.groupCollapsed('Base satellite msg received:');
                 for (var k in msg)
                     console.log(k + ':' + msg[k]);
@@ -301,6 +315,12 @@ $(document).ready(function () {
             if(newPath.length > 1){
                 map.line(newPath, 'rgba(255,0,0,1)');
             }
+
+            if(path.length > mapPointsNumber){
+                map.clearMap(mapPointsNumber);
+            }
+
+
         }
     });
 

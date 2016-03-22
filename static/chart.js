@@ -783,21 +783,16 @@ function googleMap(){
         flightPath.setMap(map);
     }
 
-    this.clearMap = function(){
+    this.clearMap = function(b){
         
-        for (var i = 0; i < lineArr.length; i++) {
+        var a = (b == 0) ? b : b - 1;
+
+        for (var i = 0; i < (lineArr.length - a); i++) {
             lineArr[i].setMap(null);
         }
 
-        for (var i = 0; i < pointArr.length; i++) {
+        for (var i = 0; i < (pointArr.length - b); i++) {
             pointArr[i].setMap(null);
         }
     }
-
-    // this.clear = function(markers) {
-    //     for (var i = 0; i < markers.length; i++) {
-    //         console.log(markers.length);
-    //         markers[i].setMap(null);
-    //     }
-    // }
 }
